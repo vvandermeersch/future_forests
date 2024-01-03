@@ -14,7 +14,12 @@ run_phenofit <-
     
     cat("Run PHENOFIT...\n")
     cat(paste0("   Writing output to: ", output_dir, "\n"))
-    system.time(shell(run, intern = quiet_mode))
+    
+    start <- Sys.time()
+    shell(run, intern = quiet_mode)
+    end <- Sys.time()
+    runtime <- end - start
+    cat(paste0("   Runtime: ", round(as.numeric(runtime)/60,1), "min\n"))
   
 }
 

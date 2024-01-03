@@ -16,7 +16,7 @@ names(locs) <- c("lat", "lon", "alt")
 # IPSL model (gregorian calendar)
 model <- "IPSL-CM6A-LR"
 format_phenofit(years = c(2016,2025), extent = ext(c(-14.05, 40.05, 34.65, 71.15)), model, scenario, 
-                locs =  locs, folder = cmip6_dir, correct_days = TRUE)
+                locs = locs, folder = cmip6_dir, correct_days = TRUE)
 
 # GFDL model (365-day calendar)
 model <- "GFDL-ESM4" 
