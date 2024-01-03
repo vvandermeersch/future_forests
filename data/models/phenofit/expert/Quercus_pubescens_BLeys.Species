@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Species>
+    <Provenance>
+        <Name>Quercus pubescens O3HP</Name>
+        <Leaf Model="2"><!-- O3HP data, EFF=0.99 n=5, file Back_up_Berangere_Leys\fit_model_pheno\Qpub.zip\Qpub\sorties PMP\sorties Qpub 11-15\modèles PMP Qpub 11-15 summary.xlsx -->
+			<t0>-91</t0> 
+            <a>0.90812</a>
+            <b>-24.83009</b>
+            <c>-4.47239</c>
+            <d>-0.94992</d>
+            <e>3.80457</e>
+            <Ccrit>123.699</Ccrit>
+            <Fcrit>55.651</Fcrit>
+        </Leaf>
+        <Flower Model="2">
+			<t0>-91</t0> 
+            <a>0.90812</a>
+            <b>-24.83009</b>
+            <c>-4.47239</c>
+            <d>-0.94992</d>
+            <e>3.80457</e>
+            <Ccrit>123.699</Ccrit>
+            <Fcrit>66.355</Fcrit>
+        </Flower>
+        <FruitMaturation Model="2">
+            <Tb>18.30058</Tb>
+            <Fcrit>256.409</Fcrit>
+            <sigma>0.6</sigma>
+            <pfe50>0.5</pfe50>
+        </FruitMaturation>
+        <Senescence Model="6">
+            <Pb>11.70992</Pb>
+            <Tb>15.16968</Tb>
+            <alpha>0</alpha>
+            <beta>2</beta>
+            <Scrit>16.49</Scrit>
+            <timelag>5.6</timelag>
+			<sigmaSen>150</sigmaSen> <!-- arbitrary value to check -->
+        </Senescence>
+        <CompoundBud>2</CompoundBud>
+        <LeafHabit>1</LeafHabit>
+        <Tdeath>-45</Tdeath>
+        <Frost>
+            <FHfrmax1>-10</FHfrmax1>
+            <FHfrmax2>-15</FHfrmax2>
+            <FHminfe>-6</FHminfe>
+            <FHminfl>-8</FHminfl>
+            <Te1>10</Te1>
+            <Te2>-16</Te2>
+            <FHtfemax>-30</FHtfemax>
+            <FHtflmax>-30</FHtflmax>
+            <FHpfemax>-15</FHpfemax>
+            <FHpflmax>-15</FHpflmax>
+            <NL1>10</NL1>
+            <NL2>16</NL2>
+        </Frost>
+        <Drought Model="1">
+            <pp1>830</pp1>
+            <pp2>1010</pp2>
+        </Drought>
+        <!-- <Evapotranspiration Model="3"/> not used anymore -->
+    </Provenance>
+</Species>

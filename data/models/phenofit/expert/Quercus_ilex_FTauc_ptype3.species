@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Species>
+    <Provenance>
+        <Name>QI</Name>
+        <Leaf Model="9"><!-- obtenu avec PMP et les données TEMPO -->
+			<t0>-103.2</t0>
+			<Vb>20.56199</Vb> <!-- anormalement eleve pour de la dormance -->
+            <d>-40</d>
+            <e>13.91902</e>
+            <Ccrit>213.245</Ccrit>
+            <Fcrit>4.962</Fcrit>
+        </Leaf>
+        <Flower Model="9"><!-- obtenu avec PMP et les données TEMPO. TROP SEVERE -->
+			<t0>-103.2</t0>
+			<Vb>20.56199</Vb> <!-- anormalement eleve pour de la dormance -->
+            <d>-40</d>
+            <e>13.91902</e>
+            <Ccrit>213.245</Ccrit>
+            <Fcrit>12.616</Fcrit>
+        </Flower>
+        <FruitMaturation Model="1"><!-- values coming from PMP (Puechabon + tempo)-->
+	   	    <aa>-2</aa>
+            <bb>12</bb>
+            <Fcrit>28.5714</Fcrit>
+            <Top>24</Top>
+            <matmoy>83.33</matmoy>
+            <sigma>5.2</sigma><!-- A CALCULER !! TATONNER DANS PMP POUR DETERMINER A QUOI CORRESPONDENT 15 JOURS EN UNITE TEMPERATURE. environ 15.6 sans Puechabon puis divise par 3 -->
+            <pfe50>0.6</pfe50>
+            <photosType>3</photosType><!-- j'ai vu dans FitlibFructification2phases que Tmin était à -5 pour type2 et 0 pour type 3.-->
+        </FruitMaturation>
+        <Senescence Model="1"> <!-- Trick to have no senescence (initially Model="4", modified by V. V.) -->
+            <Fcrit>500</Fcrit> 
+			<Tb>30</Tb> 
+			<sigmaSen>0</sigmaSen> 
+		</Senescence>
+        <CompoundBud>2</CompoundBud><!-- Retrouver les infos pour permettre un t0 au stade 15 pour les feuilles. Est-ce que marche bien ? -->
+        <LeafHabit>2</LeafHabit>
+        <Tdeath>-25</Tdeath><!-- -35 previous value, European Altlas of forest tree species, Q. ilex can sustain a few days -24°C -->
+        <Frost>
+            <FHfrmax1>-8</FHfrmax1>
+            <FHfrmax2>-10</FHfrmax2> 
+            <FHminfe>-6</FHminfe>
+            <FHminfl>-8</FHminfl>
+            <Te1>10</Te1>
+            <Te2>-16</Te2>
+            <FHtfemax>-12</FHtfemax>
+            <FHtflmax>-12</FHtflmax>
+            <FHpfemax>-15</FHpfemax>
+            <FHpflmax>-15</FHpflmax>
+            <NL1>10</NL1>
+            <NL2>16</NL2>
+        </Frost>
+        <Drought Model="1">
+            <pp1>300</pp1>
+            <pp2>1500</pp2>
+        </Drought>
+        <!-- <Evapotranspiration Model="3"/> not used anymore -->
+    </Provenance>
+</Species>
