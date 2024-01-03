@@ -1,5 +1,9 @@
-command_file_setup <- function(command_file, species_files, output_folder, climate_folder, 
-                       climate_scenario, starting_year, ending_year, quiet_mode){
+command_file_setup <- function(
+    command_file = file.path(tempdir(), "command_file.txt"), 
+    species_files, output_dir, 
+    clim_name, data_dir, 
+    years, 
+    quiet_mode){
   
   command_lines <- c()
   command_lines[1] <- c("# File for Phenofit4 CommandScript")
@@ -13,7 +17,7 @@ command_file_setup <- function(command_file, species_files, output_folder, clima
   command_lines[9] <- c("# speciesFileName\tclimateFolderName\tclimateScenario\tstartingYear\tendingYear")
   for(i in 1:length(species_files)){
     command_lines[9+i] <- paste(species_files[i], climate_folder, 
-                              climate_scenario, starting_year, ending_year, sep="\t")
+                              climate_scenario, years[1], years[2], sep="\t")
   }
   
   writeLines(command_lines, command_file)
