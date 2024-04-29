@@ -7,9 +7,9 @@ Nssp <- length(scenarios)
 Nsdm <- length(calibrations)
 
 # define temporal baseline
-first_year <- 2025 # 1970 ?
-last_year <- 2095
-baseline <- 2025:2035
+first_year <- 1970 # 1970 ?
+last_year <- 2100
+baseline <- 1970:2000
 
 yrstot <- length(first_year:last_year)+(first_year-1900)-1
 sim_fitrange <- (first_year-1900):yrstot
@@ -27,6 +27,9 @@ for(c in 1:Nsdm){
     for(s in 1:Nssp){
       
       si <- scenarios[s]
+      
+      
+      
       
       y <- simulations %>%
         dplyr::filter(calibration == ci, gcm == mi, scenario == si)
@@ -120,39 +123,40 @@ unc_comp_dec <- unc_comp %>%
   na.omit()
 
 
-data_to_plot <- unc_comp %>% dplyr::filter(year %in% c(2030:2090))
+data_to_plot <- unc_comp %>% dplyr::filter(year %in% c(2000:2100))
 
-plot(1900+c(130:190),data_to_plot$gcm / data_to_plot$tot,
-     type="n",col="blue",xlim=c(2030,2100),ylim=c(0,1),xlab="Year",ylab="Variance Fraction [%]",
+plot(1900+c(100:193),data_to_plot$gcm / data_to_plot$tot,
+     type="n",col="blue",xlim=c(2000,2100),ylim=c(0,1),xlab="Year",ylab="Variance Fraction [%]",
      frame.plot=FALSE,axes=FALSE)
-axis(side=1,at=seq(2030,2100,by=10))
+axis(side=1,at=seq(2000,2100,by=10))
 axis(side=2,at=seq(0,1,by=0.1),labels=seq(0,100,by=10))
 
 plotline1 <- data_to_plot$gcm / data_to_plot$tot
-lines(1900+c(130:190), plotline1, col="blue")
-polygon(c(1900+c(130:190),rev(1900+c(130:190))),c(plotline1,rep(0,length(c(130:190)))),
+lines(1900+c(100:193), plotline1, col="blue")
+polygon(c(1900+c(100:193),rev(1900+c(100:193))),c(plotline1,rep(0,length(c(100:193)))),
         col="blue",border=NA)
 
 plotline2 <- (data_to_plot$gcm + data_to_plot$ssp) / data_to_plot$tot
-lines((1900+c(130:190)), plotline2, col="seagreen")
-polygon(c((1900+c(130:190)),rev(1900+c(130:190))),c(plotline1,rev(plotline2)),col="seagreen",border=NA)
+lines((1900+c(100:193)), plotline2, col="seagreen")
+polygon(c((1900+c(100:193)),rev(1900+c(100:193))),c(plotline1,rev(plotline2)),col="seagreen",border=NA)
 
-plotline3 <- (data_to_plot$gcm + data_to_plot$ssp + data_to_plot$sdm) / data_to_plot$tot
-lines((1900+c(130:190)), plotline3, col="purple")
-polygon(c((1900+c(130:190)),rev(1900+c(130:190))),c(plotline3,rev(plotline2)),col="purple",border=NA)
+plotline3 <- (data_to_plot$gcm + data_to_plot$ssp + data_to_plot$cal) / data_to_plot$tot
+lines((1900+c(100:193)), plotline3, col="purple")
+polygon(c((1900+c(100:193)),rev(1900+c(100:193))),c(plotline3,rev(plotline2)),col="purple",border=NA)
 
-plotline4 <- (data_to_plot$gcm + data_to_plot$ssp + data_to_plot$sdm + data_to_plot$intvar) / data_to_plot$tot
-lines((1900+c(130:190)), plotline4, col="orange")
-polygon(c((1900+c(130:190)),rev(1900+c(130:190))),c(plotline4,rev(plotline3)),col="orange",border=NA)
+plotline4 <- (data_to_plot$gcm + data_to_plot$ssp + data_to_plot$cal + data_to_plot$intvar) / data_to_plot$tot
+lines((1900+c(100:193)), plotline4, col="orange")
+polygon(c((1900+c(100:193)),rev(1900+c(100:193))),c(plotline4,rev(plotline3)),col="orange",border=NA)
 
 
 ggplot(data = simulations, aes(x = year, y = smy-ref, 
-                               col = scenario, group = paste0(gcm, scenario, calibration))) +
+                               col = ssp, group = paste0(gcm, ssp, cal))) +
   geom_line(alpha = 0.3, linewidth = 0.2) +
-  stat_summary(aes(group = scenario), color = "white", fun.y=mean, geom="line", linewidth = 1.8) + 
-  stat_summary(aes(group = scenario), fun.y=mean, geom="line", linewidth = 0.7, linetype = "longdash") + 
-  theme_minimal() + xlim(c(2030,2100)) +
-  ylab("Fagus cells occupied")
+  stat_summary(aes(group = ssp), color = "white", fun.y=mean, geom="line", linewidth = 1.8) + 
+  stat_summary(aes(group = ssp), fun.y=mean, geom="line", linewidth = 0.7, linetype = "longdash") + 
+  theme_minimal() + xlim(c(1970,2100)) +
+  ylab("Fagus cells occupied") +
+  scale_color_manual(values = cols)
 
 ggplot() +
   geom_line(

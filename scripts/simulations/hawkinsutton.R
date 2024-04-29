@@ -1,17 +1,18 @@
-
-#define baseline
-sim_baseline <- 2025 #start of simulations, for the fitting only
-sim_lastyear <- 2095 #last simulated year
+library(matrixStats)
 
 
-#total number of years for the fitting and range of years for the fits
-yrstot <- length(sim_baseline:sim_lastyear)+(sim_baseline-1900)-1
-sim_fitrange <- (sim_baseline-1900):yrstot
-
-
+# number of SSPs/GCMs/SDMs
 Ngcm <- length(gcms)
-Nssp <- length(ssps)
+Nssp <- length(scenarios)
 Nsdm <- length(calibrations)
+
+# define temporal baseline
+first_year <- 2020 # 1970 ?
+last_year <- 2100
+yrstot <- length(first_year:last_year)+(first_year-1900)-1
+sim_fitrange <- (first_year-1900):yrstot
+
+
 
 NC <- Ngcm*Nssp #climate component, i.e. GCM*SSP
 
@@ -30,7 +31,7 @@ for(c in 1:Nsdm){
     
     for(s in 1:Nssp){
       
-      si <- ssps[s]
+      si <- scenarios[s]
       
       y <- simulations %>%
         dplyr::filter(calibration == ci, gcm == mi, scenario == si)
@@ -58,18 +59,20 @@ for(c in 1:Nsdm){
       plot(x,y); lines(x,yfit_dummy)
       
       yfit[m,s,c,sim_fitrange] <- yfit_dummy
-      climyield[m,s,c] <- mean(yfit[m,s,c,(sim_baseline-1900):((sim_baseline-1900)+20-1)])
+      climyield[m,s,c] <- mean(yfit[m,s,c,(first_year-1900):((first_year-1900)+20-1)])
       
       # 
       yieldanom[m,s,c,sim_fitrange] <- y
       
-      #percentage deviation from predicted
-      # yieldanom_dummy <- 100 * ((y / climyield[gcm,ssp,sdm]) - 1)
-      # yieldanom[gcm,ssp,sdm,sim_fitrange] <- yieldanom_dummy
-      
-      # #percentage
-      # yfit_dummy <- 100 * ((yfit[gcm,ssp,sdm,] / climyield[gcm,ssp,sdm]) - 1)
-      # yfit[gcm,ssp,sdm,] <- yfit_dummy
+      # # #percentage deviation from predicted
+      # # yieldanom_dummy <- 100 * ((y / climyield[m,s,c]) - 1)
+      # yieldanom_dummy <- y - climyield[m,s,c]
+      # yieldanom[m,s,c,sim_fitrange] <- yieldanom_dummy
+      # # 
+      # # # #percentage
+      # # yfit_dummy <- 100 * ((yfit[m,s,c,] / climyield[m,s,c]) - 1)
+      # yfit_dummy <- yfit[m,s,c,] - climyield[m,s,c]
+      # yfit[m,s,c,] <- yfit_dummy
       
     }
     
@@ -180,5 +183,20 @@ lines(1900+sim_fitrange, plotline4, col="purple")
 polygon(c(1900+sim_fitrange,rev(1900+sim_fitrange)),c(plotline4,rev(plotline3)),col="purple",border=NA)
 
 
+
+
+plot(sim_fitrange+1900, sigfac * sqrt(total_err[sim_fitrange]), col="black", type="l", 
+     lty=1,lwd=2,xlab="Year",ylab="Uncertainty [% yield]",xlim=c(2005,2098),ylim=c(0,2000),
+     axes=F) #total
+axis(side=1,at=seq(2005,2100,by=10))
+axis(side=2,at=seq(0,2000,by=100),labels=seq(0,2000,by=100))
+box()
+
+lines(sim_fitrange+1900, sigfac * gcm_comp[sim_fitrange], col="blue", lwd=2) #gcm component
+lines(sim_fitrange+1900, sigfac * ssp_comp[sim_fitrange], col="seagreen", lwd=2) #ssp component
+lines(sim_fitrange+1900, sigfac * sdm_comp[sim_fitrange], col="purple", lwd=2) #ssp component
+lines(sim_fitrange+1900, sigfac * varifit[sim_fitrange], col="orange", lwd=2) #variability
+lines(sim_fitrange+1900, tot_mean[sim_fitrange], col="black", lty=2, lwd=2) #signal
+grid(lwd=1)
 
 

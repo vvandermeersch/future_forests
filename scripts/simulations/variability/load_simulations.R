@@ -21,6 +21,7 @@ calibrations <- c("expert", "subset4_rep1", "subset5_rep4", "subset3_rep8", "sub
 
 thresholds <- c(0.162,
   sapply(calibrations[2:5], function(c) readRDS(paste0(ths_dir, "/", "cmaes_fit_", c, ".rds"))$best_threshold))
+
 gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
 scenarios <- c("ssp245", "ssp585")
 
