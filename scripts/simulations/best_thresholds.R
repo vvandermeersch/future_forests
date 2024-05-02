@@ -9,10 +9,9 @@ library(AUC)
 source(file.path(wd, "scripts", "functions", "compute_best_threshold.R"))
 source(file.path(wd, "scripts", "functions", "read_mean_outputvalue.R"))
 
-calibrations <- c("expert", paste0("subset",rep(1:2, each = 5),"_rep", 1:5))
+#calibrations <- c("expert", paste0("subset",rep(1:2, each = 5),"_rep", 1:5))
 # calibrations <- c(paste0("partial/subset",rep(2, each = 5),"_rep", 1:5))
-
-#calibrations <- c(paste0("subset",rep(1:10, each = 10),"_rep", 1:10))
+calibrations <- "expert"
 
 source <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
 # source <- "ERA5-LAND"
@@ -23,8 +22,8 @@ output_dir <- file.path(wd, "data", "fit")
 
 # species data
 sp_folder <- "D:/species/processed"
-sp_presabs <- readRDS(file.path(sp_folder, "quercus_robur/quercus_robur_presabs.rds"))
-sp_name <- "quercus_robur"
+sp_presabs <- readRDS(file.path(sp_folder, "fagus_sylvatica/fagus_sylvatica_presabs.rds"))
+sp_name <- "fagus_sylvatica"
 
 
 for(m in source){
