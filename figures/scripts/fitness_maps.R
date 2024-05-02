@@ -4,15 +4,7 @@ ctr <- subset(sim_fitness,1) %>%
   project("EPSG:3035")
 ctr <- ifel(is.na(ctr), 0, 1) %>% as.polygons()
 
-# process agreement between models
-sim_agreement_process2030 <- ifel(subset(sim_agreement,1) == 0, 0, NA) %>% as.polygons()
-values(sim_agreement_process2030) <- "Low"
-sim_agreement_process2060 <- ifel(subset(sim_agreement,2) == 0, 0, NA) %>% as.polygons()
-values(sim_agreement_process2060) <- "Low"
-sim_agreement_process2090 <- ifel(subset(sim_agreement,3) == 0, 0, NA) %>% as.polygons()
-values(sim_agreement_process2090) <- "Low"
-
-# maps of fitness change, with model agreement (>= 80%)
+# maps of fitness change
 fitness_map_2030 <- ggplot() +
   geom_spatraster(data = subset(sim_fitness,1) %>% project("EPSG:3035")) +
   scale_fill_gradientn(
@@ -20,16 +12,6 @@ fitness_map_2030 <- ggplot() +
     na.value = "transparent", limits = c(-1, 1),
     breaks = seq(-1, 1, 0.25), 
     labels = c("-1", "-0.75", "-0.5", "-0.25", "0", "0.25", "0.5", "0.75", "1")) +
-  geom_sf_pattern(data = sim_agreement_process2030 %>% project("EPSG:3035"), 
-                  aes(pattern = value),
-                  color = NA, fill = NA,
-                  pattern_colour = NA,
-                  pattern_fill = "grey50",
-                  pattern_angle = 45,
-                  pattern_density = 0.2,
-                  pattern_spacing = 0.01,
-                  pattern_key_scale_factor = 4) +
-  scale_pattern_manual(values = c(Low = "stripe"), labels = c("Low model agreement")) + 
   geom_spatvector(data = ctr, color = "grey40", fill = NA, linewidth = 0.1) +
   theme_void() +
   scale_y_continuous(expand = c(0, 0), limits = c(1298120, 5561560)) +
@@ -62,16 +44,6 @@ fitness_map_2060 <- ggplot() +
     na.value = "transparent", limits = c(-1, 1),
     breaks = seq(-1, 1, 0.25), 
     labels = c("-1", "-0.75", "-0.5", "-0.25", "0", "0.25", "0.5", "0.75", "1")) +
-  geom_sf_pattern(data = sim_agreement_process2060 %>% project("EPSG:3035"), 
-                  aes(pattern = value),
-                  color = NA, fill = NA,
-                  pattern_colour = NA,
-                  pattern_fill = "grey50",
-                  pattern_angle = 45,
-                  pattern_density = 0.2,
-                  pattern_spacing = 0.01,
-                  pattern_key_scale_factor = 4) +
-  scale_pattern_manual(values = c(Low = "stripe"), labels = c("Low model agreement")) + 
   geom_spatvector(data = ctr, color = "grey40", fill = NA, linewidth = 0.1) +
   theme_void() +
   scale_y_continuous(expand = c(0, 0), limits = c(1298120, 5561560)) +
@@ -104,16 +76,6 @@ fitness_map_2090 <- ggplot() +
     na.value = "transparent", limits = c(-1, 1),
     breaks = seq(-1, 1, 0.25), 
     labels = c("-1", "-0.75", "-0.5", "-0.25", "0", "0.25", "0.5", "0.75", "1")) +
-  geom_sf_pattern(data = sim_agreement_process2090 %>% project("EPSG:3035"), 
-                  aes(pattern = value),
-                  color = NA, fill = NA,
-                  pattern_colour = NA,
-                  pattern_fill = "grey50", 
-                  pattern_angle = 45,
-                  pattern_density = 0.2,
-                  pattern_spacing = 0.01,
-                  pattern_key_scale_factor = 4) +
-  scale_pattern_manual(values = c(Low = "stripe"), labels = c("Low model agreement")) + 
   geom_spatvector(data = ctr, color = "grey40", fill = NA, linewidth = 0.1) +
   theme_void() +
   scale_y_continuous(expand = c(0, 0), limits = c(1298120, 5561560)) +

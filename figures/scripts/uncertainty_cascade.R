@@ -1,5 +1,4 @@
 
-head(simulations)
 
 gcm_means <- simulations %>%
   group_by(gcm, ssp, year) %>% 
