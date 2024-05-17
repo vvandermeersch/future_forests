@@ -19,7 +19,7 @@ Nsdm <- length(calibrations)
 ndeg_poly <- 4
 
 plan(multisession, workers = ncores)
-simulations <- foreach(c = 1:Nsdm, .combine=rbind) %dofuture% {
+simulations_pbm <- foreach(c = 1:Nsdm, .combine=rbind) %dofuture% {
   
   ci <- calibrations[c]
   

@@ -31,6 +31,49 @@ sim_fitness <- lapply(c(2030, 2060, 2090), function(year){
 names(sim_fitness) <- c(2030, 2060, 2090)
 plan(sequential);gc()
 
+# Model agreement on sign of fitness change
+plan(multisession, workers = 1)
+sim_agreement <- lapply(c(2030, 2060, 2090), function(year){
+  cat(year)
+  
+  wdw <- c((year-10),(year+10))
+  
+  .sign <- future_lapply(models, function(c){
+    
+    .sign <- lapply(gcms, function(m){
+      
+      sim_dir <- file.path(wd, "data", "simulations", species, c, m)
+      
+      ref <- rast(readRDS(file.path(sim_dir, paste0("historical", ".rds")))[c(2,1,3)])
+      
+      fitness <- rast(readRDS(file.path(sim_dir, scenario, paste0(wdw[1], "_", wdw[2], ".rds")))[c(2,1,3)])
+      
+      change <- fitness-ref
+      sign <- ifel(change < 0, -1, 1)
+      
+      return(sign)
+      
+    }) %>% rast() %>% wrap()
+    
+    return(.sign)
+  })
+  
+  sign <- lapply(.sign, unwrap) %>% rast()
+  
+  neg <- ifel(sign < 0, 1, 0) %>% sum()/nlyr(sign)
+  neg <- ifel(neg < 0.8, 0, 1)
+  
+  pos <- ifel(sign > 0, 1, 0) %>% sum()/nlyr(sign)
+  pos <- ifel(pos < 0.8, 0, 1)
+  
+  agreement <- pos + neg
+  
+  return(agreement)
+  
+}) %>% rast()
+names(sim_agreement) <- c(2030, 2060, 2090)
+plan(sequential);gc()
+
 # Distribution
 plan(multisession, workers = 1)
 sim_distribution <- lapply(c(2030, 2060, 2090), function(year){

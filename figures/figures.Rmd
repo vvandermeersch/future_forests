@@ -21,6 +21,7 @@ library(lubridate)
 library(cowplot)
 library(zoo)
 library(ggplot2)
+library(future.apply)
 library(doFuture)
 library(tidyterra)
 library(ggpattern)
@@ -31,7 +32,7 @@ library(khroma)
 ## Global - Fagus sylvatica
 
 ```{r global_fitness_ssp245, fig.height = 75, fig.cap = "Fitness change, relative to 1970-2000.", dev = "cairo_pdf"}
-reload_data <- FALSE
+reload_data <- TRUE
 breakseq <- seq(0, 500, 100)
 
 species <- "fagus_sylvatica"
@@ -40,6 +41,7 @@ calibrations <- (paste0("subset",rep(1:10, each = 10),"_rep", 1:10))
 gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
 
 scenario <- "ssp245"
+years <- c(2030, 2070, 2090)
 
 # load simulations
 if(reload_data){
@@ -56,16 +58,16 @@ source(file.path(wd, "figures", "scripts", "fitness_maps_wagreement.R"))
 
 ```
 
-```{r global_distribution_ssp245, fig.height = 150, fig.cap = "Fitness change relative to 1970-2000 + range shifts (SSP245)", dev = "cairo_pdf"}
+```{r global_distribution_ssp245, fig.height = 130, fig.cap = "Fitness change relative to 1970-2000 + range shifts (SSP245)", dev = "cairo_pdf"}
 
 # process maps
 source(file.path(wd, "figures", "scripts", "distribution_maps.R"))
-plot_grid(fitness_maps, distribution_maps, nrow = 2)
+plot_grid(fitness_maps, distribution_maps, nrow = 2, rel_heights = c(1,1))
 
 ```
 
 ```{r global_fitness_ssp585, fig.height = 75, fig.cap = "Fitness change, relative to 1970-2000.", dev = "cairo_pdf"}
-reload_data <- FALSE
+reload_data <- TRUE
 
 species <- "fagus_sylvatica"
 baseline <- 1970:2000 # define temporal baseline (= reference)
@@ -88,52 +90,144 @@ source(file.path(wd, "figures", "scripts", "fitness_maps_wagreement.R"))
 
 ```
 
-```{r global_distribution_ssp585, fig.height = 150, fig.cap = "Fitness change relative to 1970-2000 + range shifts (SSP585)", dev = "cairo_pdf"}
+```{r global_distribution_ssp585, fig.height = 130, fig.cap = "Fitness change relative to 1970-2000 + range shifts (SSP585)", dev = "cairo_pdf"}
 
 # process maps
 source(file.path(wd, "figures", "scripts", "distribution_maps.R"))
-plot_grid(fitness_maps, distribution_maps,nrow = 2)
+plot_grid(fitness_maps, distribution_maps,nrow = 2, rel_heights = c(1,1))
 
 ```
 
-```{r raw_we, fig.height = 60, fig.cap = "ANOVA on raw outputs (21-year average fitness)", eval = FALSE}
+```{r global_fitness_ssp245_fsyl_expert, fig.height = 75, fig.cap = "EXPERT CALIBRATION. Fitness change, relative to 1970-2000.", dev = "cairo_pdf"}
+reload_data <- TRUE
+breakseq <- seq(0, 5, 1)
 
 species <- "fagus_sylvatica"
-
 baseline <- 1970:2000 # define temporal baseline (= reference)
-
-calibrations <- (paste0("subset",rep(1:10, each = 10),"_rep", 1:10))
-scenarios <- c("ssp245", "ssp585")
+calibrations <- "expert"
 gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
 
-country <- c("France", "United Kingdom", "Ireland", "Belgium", "Netherlands", "Andorra", "Spain", "Italy")
+scenario <- "ssp245"
 
 # load simulations
-ncores <- 5
-source(file.path(wd, "figures", "scripts", "load_yearly_fitness.R"))
-sim_copy <- simulations
+if(reload_data){
+  source(file.path(wd, "figures", "scripts", "load_exp_maps.R"))
+}else{
+  sim_fitness <- readRDS(file = file.path(wd,"figures","data","maps", species, "expert", paste0("fitness_", scenario, ".rds")))
+  sim_distribution <- readRDS(file = file.path(wd,"figures","data","maps", species, "expert", paste0("distribution_", scenario, ".rds")))
+}
 
-# 21-year average fitness
-simulations <- simulations %>%
-  group_by(cal, gcm, ssp) %>% 
-  mutate(y = rollapply(y,21,mean,align='center',fill=NA)) %>%
-  ungroup %>% na.omit()
-
-# run ANOVA on raw outputs, make figures
-source(file.path(wd, "figures", "scripts", "anova_raw_outputs.R"))
-
-plot_grid(
-  plot_grid(trend_unc, unc_decomp  + theme(legend.position = 'none'), rel_widths = c(0.6, 0.37)),
-  get_legend(unc_decomp), 
-  ncol = 1, 
-  rel_heights = c(1,0.1))
+# process maps
+source(file.path(wd, "figures", "scripts", "fitness_maps.R"))
 
 ```
+
+```{r global_distribution_ssp245_expert, fig.height = 130, fig.cap = "EXPERT CALIBRATION. Fitness change relative to 1970-2000 + range shifts (SSP245)", dev = "cairo_pdf"}
+
+# process maps
+source(file.path(wd, "figures", "scripts", "distribution_maps.R"))
+plot_grid(fitness_maps, distribution_maps,nrow = 2, rel_heights = c(1,1))
+
+```
+
+```{r global_fitness_ssp585_fsyl_expert, fig.height = 75, fig.cap = "EXPERT CALIBRATION. Fitness change, relative to 1970-2000.", dev = "cairo_pdf"}
+reload_data <- TRUE
+breakseq <- seq(0, 5, 1)
+
+species <- "fagus_sylvatica"
+baseline <- 1970:2000 # define temporal baseline (= reference)
+calibrations <- "expert"
+gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
+
+scenario <- "ssp585"
+
+# load simulations
+if(reload_data){
+  source(file.path(wd, "figures", "scripts", "load_exp_maps.R"))
+}else{
+  sim_fitness <- readRDS(file = file.path(wd,"figures","data","maps", species, "expert", paste0("fitness_", scenario, ".rds")))
+  sim_distribution <- readRDS(file = file.path(wd,"figures","data","maps", species, "expert", paste0("distribution_", scenario, ".rds")))
+}
+
+# process maps
+source(file.path(wd, "figures", "scripts", "fitness_maps.R"))
+
+```
+
+```{r global_distribution_ssp585_expert, fig.height = 130, fig.cap = "EXPERT CALIBRATION. Fitness change relative to 1970-2000 + range shifts (SSP585)", dev = "cairo_pdf"}
+
+# process maps
+source(file.path(wd, "figures", "scripts", "distribution_maps.R"))
+plot_grid(fitness_maps, distribution_maps,nrow = 2, rel_heights = c(1,1))
+
+```
+
+```{r global_fitness_ssp245_fsyl_csdm, fig.height = 75, fig.cap = "CSDM. Fitness change, relative to 1970-2000.", dev = "cairo_pdf"}
+
+breakseq <- seq(0, 20, 5)
+
+species <- "fagus_sylvatica"
+models <- c("lasso_glm", "random_forest", "gam", "brt")
+gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
+
+scenario <- "ssp245"
+
+# load simulations
+source(file.path(wd, "figures", "scripts", "load_csdm_maps.R"))
+
+crs(sim_fitness) <- "EPSG:4326"
+crs(sim_distribution) <- "EPSG:4326"
+crs(sim_agreement) <- "EPSG:4326"
+
+# process maps
+source(file.path(wd, "figures", "scripts", "fitness_maps_wagreement.R"))
+
+```
+
+```{r global_distribution_ssp245_fsyl_csdm, fig.height = 130, fig.cap = "CSDM. Fitness change relative to 1970-2000 + range shifts (SSP245)", dev = "cairo_pdf"}
+
+# process maps
+source(file.path(wd, "figures", "scripts", "distribution_maps.R"))
+plot_grid(fitness_maps, distribution_maps,nrow = 2, rel_heights = c(1,1))
+
+```
+
+```{r global_fitness_ssp585_fsyl_csdm, fig.height = 75, fig.cap = "CSDM. Fitness change, relative to 1970-2000.", dev = "cairo_pdf"}
+
+breakseq <- seq(0, 20, 5)
+
+species <- "fagus_sylvatica"
+models <- c("lasso_glm", "random_forest", "gam", "brt")
+gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
+
+scenario <- "ssp585"
+
+# load simulations
+source(file.path(wd, "figures", "scripts", "load_csdm_maps.R"))
+
+crs(sim_fitness) <- "EPSG:4326"
+crs(sim_distribution) <- "EPSG:4326"
+crs(sim_agreement) <- "EPSG:4326"
+
+# process maps
+source(file.path(wd, "figures", "scripts", "fitness_maps_wagreement.R"))
+
+```
+
+```{r global_distribution_ssp585_fsyl_csdm, fig.height = 130, fig.cap = "CSDM. Fitness change relative to 1970-2000 + range shifts (SSP585)", dev = "cairo_pdf"}
+
+# process maps
+source(file.path(wd, "figures", "scripts", "distribution_maps.R"))
+plot_grid(fitness_maps, distribution_maps,nrow = 2, rel_heights = c(1,1))
+
+```
+
+\newpage 
 
 # Global - Quercus robur
 
-```{r global_fitness_ssp245_qrob, fig.height = 75, fig.cap = "Fitness change, relative to 1970-2000.", dev = "cairo_pdf"}
-reload_data <- FALSE
+```{r global_fitness_ssp245_qrob, fig.height = 75, fig.cap = "Fitness change, relative to 1970-2000.", dev = "cairo_pdf", eval = TRUE}
+reload_data <- TRUE
 breakseq <- seq(0, 50, 10)
 
 species <- "quercus_robur"
@@ -158,16 +252,16 @@ source(file.path(wd, "figures", "scripts", "fitness_maps_wagreement.R"))
 
 ```
 
-```{r global_distribution_ssp245_qrob, fig.height = 150, fig.cap = "Fitness change relative to 1970-2000 + range shifts (SSP245)", dev = "cairo_pdf"}
+```{r global_distribution_ssp245_qrob, fig.height = 130, fig.cap = "Fitness change relative to 1970-2000 + range shifts (SSP245)", dev = "cairo_pdf", eval = TRUE}
 
 # process maps
 source(file.path(wd, "figures", "scripts", "distribution_maps.R"))
-plot_grid(fitness_maps, distribution_maps, nrow = 2)
+plot_grid(fitness_maps, distribution_maps,nrow = 2, rel_heights = c(1,1))
 
 ```
 
-```{r global_fitness_ssp585_qrob, fig.height = 75, fig.cap = "Fitness change, relative to 1970-2000.", dev = "cairo_pdf"}
-reload_data <- FALSE
+```{r global_fitness_ssp585_qrob, fig.height = 75, fig.cap = "Fitness change, relative to 1970-2000.", dev = "cairo_pdf", eval = TRUE}
+reload_data <- TRUE
 breakseq <- seq(0, 50, 10)
 
 species <- "quercus_robur"
@@ -192,49 +286,85 @@ source(file.path(wd, "figures", "scripts", "fitness_maps_wagreement.R"))
 
 ```
 
-```{r global_distribution_ssp585_qrob, fig.height = 150, fig.cap = "Fitness change relative to 1970-2000 + range shifts (SSP245)", dev = "cairo_pdf"}
+```{r global_distribution_ssp585_qrob, fig.height = 130, fig.cap = "Fitness change relative to 1970-2000 + range shifts (SSP585)", dev = "cairo_pdf", eval = TRUE}
 
 # process maps
 source(file.path(wd, "figures", "scripts", "distribution_maps.R"))
-plot_grid(fitness_maps, distribution_maps, nrow = 2)
+plot_grid(fitness_maps, distribution_maps,nrow = 2, rel_heights = c(1,1))
 
 ```
+
+```{r global_fitness_ssp585_qrob_csdm, fig.height = 75, fig.cap = "CSDM. Fitness change, relative to 1970-2000.", dev = "cairo_pdf"}
+
+breakseq <- seq(0, 20, 5)
+
+species <- "quercus_robur"
+models <- c("lasso_glm", "random_forest", "gam", "brt")
+gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
+
+scenario <- "ssp585"
+
+# load simulations
+source(file.path(wd, "figures", "scripts", "load_csdm_maps.R"))
+
+crs(sim_fitness) <- "EPSG:4326"
+crs(sim_distribution) <- "EPSG:4326"
+crs(sim_agreement) <- "EPSG:4326"
+
+# process maps
+source(file.path(wd, "figures", "scripts", "fitness_maps_wagreement.R"))
+
+```
+
+```{r global_distribution_ssp585_qrob_csdm, fig.height = 130, fig.cap = "CSDM. Fitness change relative to 1970-2000 + range shifts (SSP585)", dev = "cairo_pdf"}
+
+# process maps
+source(file.path(wd, "figures", "scripts", "distribution_maps.R"))
+plot_grid(fitness_maps, distribution_maps,nrow = 2, rel_heights = c(1,1))
+
+```
+
+
+
 
 \newpage
 
 ## France
 
-```{r raw, fig.height = 60, fig.cap = "ANOVA on raw outputs (21-year average fitness)", eval = FALSE}
+```{r raw, fig.height = 60, fig.cap = "ANOVA on raw outputs (21-year average fitness)", eval = TRUE}
 
 species <- "fagus_sylvatica"
 
 baseline <- 1970:2000 # define temporal baseline (= reference)
 
-calibrations <- (paste0("subset",rep(1:10, each = 10),"_rep", 1:10))
+calibrations <- c("expert", paste0("subset",rep(1:10, each = 10),"_rep", 1:10))
 scenarios <- c("ssp245", "ssp585")
 gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
 
 country <- "France"
 
-# load simulations
+# load simulations of PBMs
 ncores <- 10
 source(file.path(wd, "figures", "scripts", "load_yearly_fitness.R"))
-sim_copy <- simulations
+sim_copy <- simulations_pbm
+
+# load simulations of CSDMs
+source(file.path(wd, "figures", "scripts", "load_yearly_fitness_csdm.R"))
 
 # 21-year average fitness
-simulations <- simulations %>%
+simulations_pbm <- simulations_pbm %>%
   group_by(cal, gcm, ssp) %>% 
   mutate(y = rollapply(y,21,mean,align='center',fill=NA)) %>%
   ungroup %>% na.omit()
 
-# run ANOVA on raw outputs, make figures
-source(file.path(wd, "figures", "scripts", "anova_raw_outputs.R"))
-
-plot_grid(
-  plot_grid(trend_unc, unc_decomp  + theme(legend.position = 'none'), rel_widths = c(0.6, 0.37)),
-  get_legend(unc_decomp), 
-  ncol = 1, 
-  rel_heights = c(1,0.1))
+# # run ANOVA on raw outputs, make figures
+# source(file.path(wd, "figures", "scripts", "anova_raw_outputs.R"))
+# 
+# plot_grid(
+#   plot_grid(trend_unc, unc_decomp  + theme(legend.position = 'none'), rel_widths = c(0.6, 0.37)),
+#   get_legend(unc_decomp), 
+#   ncol = 1, 
+#   rel_heights = c(1,0.1))
 
 ```
 
@@ -321,10 +451,10 @@ plot_grid(
 
 ```
 
-```{r uncertainty_cascade, fig.height = 130, fig.width = 70, fig.cap = "Uncertainty cascade", eval = FALSE}
+```{r uncertainty_cascade, fig.height = 130, fig.width = 70, fig.cap = "Uncertainty cascade", eval = TRUE}
 
 # make figure
-source(file.path(wd, "figures", "scripts", "uncertainty_cascade.R"))
+source(file.path(wd, "figures", "scripts", "uncertainty_cascade_permethod.R"))
 
 unc_cascade
 

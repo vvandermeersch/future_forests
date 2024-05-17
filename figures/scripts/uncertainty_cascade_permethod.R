@@ -1,5 +1,10 @@
 
-simulations$method <- ifelse(simulations$cal == "expert", "expert", "inverse")
+simulations <- rbind(simulations_pbm,simulations_csdm)
+
+simulations$method <- factor(ifelse(simulations$cal == "expert", "expert", 
+                             ifelse(simulations$cal %in% models, "csdm", "inverse")),
+                             levels = c("expert", "inverse", "csdm"))
+
 
 gcm_means <- simulations %>%
   group_by(gcm, method, ssp, year) %>% 
@@ -37,21 +42,26 @@ unc_cascade <- ggplot() +
   geom_line(data = data %>% dplyr::filter(y < 2 & method == "inverse") %>% unique(),
             aes(x = x, y = y, group = paste0(cal, method, ssp, gcm), 
                 color = ssp, alpha = method), linewidth = 0.5) +
+  geom_line(data = data %>% dplyr::filter(y < 2 & method == "csdm") %>% unique(),
+            aes(x = x, y = y, group = paste0(cal, method, ssp, gcm), 
+                color = ssp, alpha = method), linewidth = 0.5) +
   geom_line(data = data %>% dplyr::filter(y < 2 & method == "expert") %>% unique(),
             aes(x = x, y = y, group = paste0(cal, method, ssp, gcm), 
                 color = ssp, alpha = method), linewidth = 0.5) +
-  scale_alpha_manual(values = c("expert" = 0.5, "inverse" = 0.1), guide = "none") +
+  scale_alpha_manual(values = c("expert" = 0.5, "inverse" = 0.1, "csdm" = 0.2), guide = "none") +
   geom_line(data = data %>% dplyr::filter(y > 0 & y < 3),
             aes(x = x, y = y, group = paste0(method, ssp, gcm), color = ssp), alpha = 0.7, linewidth = 0.6) +
   geom_line(data = data %>% dplyr::filter(y > 1),
             aes(x = x, y = y, group = paste0(method, ssp), color = ssp), alpha = 0.9, linewidth = 0.6) +
-  geom_point(data = data %>% dplyr::filter(y == 2) %>% dplyr::select(-c(gcm, ref, cal)) %>% unique(),
-             aes(x = x, y = y, shape = method, color = ssp), size = 2, fill = "white") +
-  scale_shape_manual(values = c("expert" = 22, "inverse" = 21)) +
   geom_line(data = rbind(data %>% dplyr::filter(y > 2), data %>% filter(y > 2) %>% mutate(y = 3.2)),
             aes(x = x, y = y, group = paste0(ssp), color = ssp), alpha = 1, linewidth = 1) +
   geom_text(data = data %>% filter(y > 2) %>% mutate(y = 3.3) %>% select(year, ssp, x, y) %>% unique() %>% filter(year == "2080-2100"),
             aes(x = x, y = y, label = ifelse(ssp == "ssp245", "SSP2", "SSP5"), color = ssp), size = 2.3) +
+  geom_point(data = data %>% dplyr::filter(y == 2) %>% dplyr::select(-c(gcm, ref, cal)) %>% unique(),
+             aes(x = x, y = y, shape = method), size = 2, fill = "white", color = "white") +
+  geom_point(data = data %>% dplyr::filter(y == 2) %>% dplyr::select(-c(gcm, ref, cal)) %>% unique(),
+             aes(x = x, y = y, shape = method, color = ssp), size = 2, fill = NA) +
+  scale_shape_manual(values = c("expert" = 22, "inverse" = 21, "csdm" = 24)) +
   theme_bw() + 
   geom_text(data = data.frame(year = "2020-2040", y = c(0.2,1.2, 2.2, 3.2), 
                               text = c("Individual\ncalibration", "GCMs multi-\ncalibration means", "Individual method\nensemble means", "SSPs multi-\nmethod means")),
