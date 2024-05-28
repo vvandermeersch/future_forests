@@ -1,0 +1,1601 @@
+---
+title: "Figures"
+author: "Victor Van der Meersch"
+date: "2024-04-22"
+geometry: "left=2.5cm,right=2.5cm,top=2cm,bottom=2cm"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+wd <- "C:/Users/vandermeersch/Documents/CEFE/projects/future_forests"
+
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE,
+                      fig.path= paste0(wd, "/figures_updated/files/"))
+chunkhooks::hook_figure_unit("mm")
+
+library(terra)
+library(sf)
+library(dplyr)
+library(rnaturalearth)
+library(lubridate)
+library(cowplot)
+library(zoo)
+library(ggplot2)
+library(future.apply)
+library(doFuture)
+library(tidyterra)
+library(ggpattern)
+library(RColorBrewer)
+library(khroma)
+library(grid)
+```
+
+## Fagus sylvatica
+
+```{r FPBM_simulations, fig.height = 75, fig.cap = "Fitness change, relative to 1970-2000.", dev = "cairo_pdf"}
+
+reload_data <- FALSE
+breakseq <- seq(0, 500, 100)
+
+species <- "fagus_sylvatica"
+baseline <- 1970:2000 # define temporal baseline (= reference)
+calibrations <- (paste0("subset",rep(1:10, each = 10),"_rep", 1:10))
+gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
+
+scenario <- "ssp245"
+
+years <- c(2050, 2090)
+
+# load simulations
+if(reload_data){
+  source(file.path(wd, "figures_updated", "scripts", "load_invcal_maps.R"))
+}else{
+  sim_fitness <- readRDS(file = file.path(wd,"figures_updated","data","maps", species, "fitted", paste0("fitness_", scenario, ".rds")))
+  sim_agreement <- readRDS(file = file.path(wd,"figures_updated","data","maps", species, "fitted", paste0("agreement_", scenario, ".rds")))
+  sim_distribution <- readRDS(file = file.path(wd,"figures_updated","data","maps", species, "fitted", paste0("distribution_", scenario, ".rds")))
+}
+
+# fitness maps
+panel_color <- "#995D81"
+source(file.path(wd, "figures_updated", "scripts", "fitness_maps_wagreement.R"))
+
+# distribution maps
+source(file.path(wd, "figures_updated", "scripts", "distribution_maps.R"))
+
+fpbm_fit2050 <- fitness_map_2050
+fpbm_fit2090 <- fitness_map_2090
+fpbm_dist2050 <- distribution_map_2050
+fpbm_dist2090 <- distribution_map_2090
+
+```
+
+```{r EPBM_simulations, fig.height = 75, fig.cap = "Fitness change, relative to 1970-2000.", dev = "cairo_pdf"}
+
+reload_data <- FALSE
+breakseq <- seq(0, 5, 1)
+
+calibrations <- 'expert'
+
+# load simulations
+if(reload_data){
+  source(file.path(wd, "figures_updated", "scripts", "load_exp_maps.R"))
+}else{
+  sim_fitness <- readRDS(file = file.path(wd,"figures_updated","data","maps", species, "expert", paste0("fitness_", scenario, ".rds")))
+  sim_distribution <- readRDS(file = file.path(wd,"figures_updated","data","maps", species, "expert", paste0("distribution_", scenario, ".rds")))
+}
+
+# fitness maps
+panel_color <- "#018530"
+source(file.path(wd, "figures_updated", "scripts", "fitness_maps.R"))
+
+# distribution maps
+source(file.path(wd, "figures_updated", "scripts", "distribution_maps.R"))
+
+epbm_fit2050 <- fitness_map_2050
+epbm_fit2090 <- fitness_map_2090
+epbm_dist2050 <- distribution_map_2050
+epbm_dist2090 <- distribution_map_2090
+
+```
+
+```{r CSDM_simulations, fig.height = 75, fig.cap = "CSDM. Fitness change, relative to 1970-2000.", dev = "cairo_pdf"}
+
+breakseq <- seq(0, 20, 5)
+
+models <- c("lasso_glm", "random_forest", "gam", "brt")
+
+# load simulations
+source(file.path(wd, "figures_updated", "scripts", "load_csdm_maps.R"))
+
+crs(sim_fitness) <- "EPSG:4326"
+crs(sim_distribution) <- "EPSG:4326"
+crs(sim_agreement) <- "EPSG:4326"
+
+# fitness maps
+panel_color <- "#457b9d"
+source(file.path(wd, "figures_updated", "scripts", "fitness_maps_wagreement.R"))
+
+# distribution maps
+source(file.path(wd, "figures_updated", "scripts", "distribution_maps.R"))
+
+csdm_fit2050 <- fitness_map_2050
+csdm_fit2090 <- fitness_map_2090
+csdm_dist2050 <- distribution_map_2050
+csdm_dist2090 <- distribution_map_2090
+
+```
+
+```{r assemble, fig.height = 140, fig.width = 120, fig.cap = "Fitness change, relative to 1970-2000.", dev = "cairo_pdf", eval = FALSE}
+
+plot_grid(
+  NULL,
+  csdm_fit2050 + theme(legend.position = 'none'),
+  fpbm_fit2050 + theme(legend.position = 'none'), 
+  epbm_fit2050 + theme(legend.position = 'none'),
+  NULL, NULL, NULL, NULL,
+  NULL,
+  csdm_dist2050 + theme(legend.position = 'none'), 
+  fpbm_dist2050 + theme(legend.position = 'none'), 
+  epbm_dist2050 + theme(legend.position = 'none'),
+  NULL, NULL, NULL, NULL,
+  NULL,
+  csdm_fit2090 + theme(legend.position = 'none'), 
+  fpbm_fit2090 + theme(legend.position = 'none'), 
+  epbm_fit2090 + theme(legend.position = 'none'),
+  NULL, NULL, NULL, NULL,
+  NULL,
+  csdm_dist2090 + theme(legend.position = 'none'), 
+  fpbm_dist2090 + theme(legend.position = 'none'), 
+  epbm_dist2090 + theme(legend.position = 'none'),
+  ncol = 4,
+  rel_heights = c(1,-.1,1,.05,1,-.1,1), rel_widths = c(0.1, 1, 1, 1)) +
+  draw_label("2040-2060", x = 0.02, y = 0.69, size = 8, hjust = 0, angle = 90) +
+  draw_label("2080-2100", x = 0.02, y = 0.18, size = 8, hjust = 0, angle = 90)
+
+```
+
+## Abies alba
+
+```{r FPBM_simulations_abies, fig.height = 75, fig.cap = "Fitness change, relative to 1970-2000.", dev = "cairo_pdf"}
+
+reload_data <- FALSE
+breakseq <- seq(0, 50, 10)
+
+species <- "abies_alba"
+baseline <- 1970:2000 # define temporal baseline (= reference)
+calibrations <- (paste0("subset",rep(1:2, each = 5),"_rep", 1:5))
+gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
+
+scenario <- "ssp245"
+
+years <- c(2050, 2090)
+
+# load simulations
+if(reload_data){
+  source(file.path(wd, "figures_updated", "scripts", "load_invcal_maps.R"))
+}else{
+  sim_fitness <- readRDS(file = file.path(wd,"figures_updated","data","maps", species, "fitted", paste0("fitness_", scenario, ".rds")))
+  sim_agreement <- readRDS(file = file.path(wd,"figures_updated","data","maps", species, "fitted", paste0("agreement_", scenario, ".rds")))
+  sim_distribution <- readRDS(file = file.path(wd,"figures_updated","data","maps", species, "fitted", paste0("distribution_", scenario, ".rds")))
+}
+
+# fitness maps
+panel_color <- "#995D81"
+source(file.path(wd, "figures_updated", "scripts", "fitness_maps_wagreement.R"))
+
+# distribution maps
+source(file.path(wd, "figures_updated", "scripts", "distribution_maps.R"))
+
+fpbm_fit2050 <- fitness_map_2050
+fpbm_fit2090 <- fitness_map_2090
+fpbm_dist2050 <- distribution_map_2050
+fpbm_dist2090 <- distribution_map_2090
+
+```
+
+```{r EPBM_simulations_abies, fig.height = 75, fig.cap = "Fitness change, relative to 1970-2000.", dev = "cairo_pdf"}
+
+reload_data <- FALSE
+breakseq <- seq(0, 5, 1)
+
+calibrations <- 'expert'
+
+# load simulations
+if(reload_data){
+  source(file.path(wd, "figures_updated", "scripts", "load_exp_maps.R"))
+}else{
+  sim_fitness <- readRDS(file = file.path(wd,"figures_updated","data","maps", species, "expert", paste0("fitness_", scenario, ".rds")))
+  sim_distribution <- readRDS(file = file.path(wd,"figures_updated","data","maps", species, "expert", paste0("distribution_", scenario, ".rds")))
+}
+
+# fitness maps
+panel_color <- "#018530"
+source(file.path(wd, "figures_updated", "scripts", "fitness_maps.R"))
+
+# distribution maps
+source(file.path(wd, "figures_updated", "scripts", "distribution_maps.R"))
+
+epbm_fit2050 <- fitness_map_2050
+epbm_fit2090 <- fitness_map_2090
+epbm_dist2050 <- distribution_map_2050
+epbm_dist2090 <- distribution_map_2090
+
+```
+
+```{r CSDM_simulations_abies, fig.height = 75, fig.cap = "CSDM. Fitness change, relative to 1970-2000.", dev = "cairo_pdf"}
+
+breakseq <- seq(0, 20, 5)
+
+models <- c("lasso_glm", "random_forest", "gam", "brt")
+
+# load simulations
+source(file.path(wd, "figures_updated", "scripts", "load_csdm_maps.R"))
+
+crs(sim_fitness) <- "EPSG:4326"
+crs(sim_distribution) <- "EPSG:4326"
+crs(sim_agreement) <- "EPSG:4326"
+
+# fitness maps
+panel_color <- "#457b9d"
+source(file.path(wd, "figures_updated", "scripts", "fitness_maps_wagreement.R"))
+
+# distribution maps
+source(file.path(wd, "figures_updated", "scripts", "distribution_maps.R"))
+
+csdm_fit2050 <- fitness_map_2050
+csdm_fit2090 <- fitness_map_2090
+csdm_dist2050 <- distribution_map_2050
+csdm_dist2090 <- distribution_map_2090
+
+```
+
+```{r assemble_abies, fig.height = 140, fig.width = 120, fig.cap = "Fitness change, relative to 1970-2000.", dev = "cairo_pdf", eval = TRUE}
+
+plot_grid(
+  NULL,
+  csdm_fit2050 + theme(legend.position = 'none'),
+  fpbm_fit2050 + theme(legend.position = 'none'),
+  epbm_fit2050 + theme(legend.position = 'none'),
+  NULL, NULL, NULL, NULL,
+  NULL,
+  csdm_dist2050 + theme(legend.position = 'none'),
+  fpbm_dist2050 + theme(legend.position = 'none'),
+  epbm_dist2050 + theme(legend.position = 'none'),
+  NULL, NULL, NULL, NULL,
+  NULL,
+  csdm_fit2090 + theme(legend.position = 'none'),
+  fpbm_fit2090 + theme(legend.position = 'none'),
+  epbm_fit2090 + theme(legend.position = 'none'),
+  NULL, NULL, NULL, NULL,
+  NULL,
+  csdm_dist2090 + theme(legend.position = 'none'),
+  fpbm_dist2090 + theme(legend.position = 'none'),
+  epbm_dist2090 + theme(legend.position = 'none'),
+  ncol = 4,
+  rel_heights = c(1,-.1,1,.05,1,-.1,1), rel_widths = c(0.1, 1, 1, 1)) +
+  draw_label("2040-2060", x = 0.02, y = 0.69, size = 8, hjust = 0, angle = 90) +
+  draw_label("2080-2100", x = 0.02, y = 0.18, size = 8, hjust = 0, angle = 90)
+
+
+# plot_grid(
+#   NULL,
+#   csdm_fit2050 + theme(legend.position = 'none'),
+#   fpbm_fit2050 + theme(legend.position = 'none'),
+#   NULL, NULL, NULL, 
+#   NULL,
+#   csdm_dist2050 + theme(legend.position = 'none'),
+#   fpbm_dist2050 + theme(legend.position = 'none'),
+#   NULL, NULL, NULL, 
+#   NULL,
+#   csdm_fit2090 + theme(legend.position = 'none'),
+#   fpbm_fit2090 + theme(legend.position = 'none'),
+#   NULL, NULL, NULL, 
+#   NULL,
+#   csdm_dist2090 + theme(legend.position = 'none'),
+#   fpbm_dist2090 + theme(legend.position = 'none'),
+#   ncol = 3,
+#   rel_heights = c(1,-.1,1,.05,1,-.1,1), rel_widths = c(0.1, 1, 1, 1)) +
+#   draw_label("2040-2060", x = 0.02, y = 0.69, size = 8, hjust = 0, angle = 90) +
+#   draw_label("2080-2100", x = 0.02, y = 0.18, size = 8, hjust = 0, angle = 90)
+
+```
+
+
+
+## Evolution of uncertainties
+
+```{r ecoregions, fig.height = 60, fig.cap = "Ecoregions", eval = FALSE}
+
+source(file.path(wd, "figures_updated", "scripts", "ecoregions.R"))
+
+```
+
+```{r atlantic_fagus, fig.height = 60, fig.cap = "Atlantic", eval = FALSE}
+
+reload_data <- FALSE
+
+species <- "fagus_sylvatica"
+
+baseline <- 1970:2000 # define temporal baseline (= reference)
+
+calibrations <- c("expert", paste0("subset",rep(1:10, each = 10),"_rep", 1:10))
+scenarios <- c("ssp245", "ssp585")
+gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
+
+ecoregion <- "Atlantic"
+
+# load simulations
+if(reload_data){
+  # load simulations of PBMs
+  ncores <- 5
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness.R"))
+  saveRDS(simulations_pbm, file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_fsyl_atlantic.rds"))
+
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness_csdm.R"))
+  saveRDS(simulations_csdm, file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_fsyl_atlantic.rds"))
+  
+}else{
+  simulations_pbm <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_fsyl_atlantic.rds"))
+  simulations_csdm <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_fsyl_atlantic.rds"))
+}
+
+# 21-year average fitness
+simulations_pbm <- simulations_pbm %>%
+  group_by(cal, gcm, ssp) %>% 
+  mutate(y = rollapply(y,21,mean,align='center',fill=NA)) %>%
+  ungroup %>% na.omit()
+
+# ensemble by method
+simulations <- rbind(simulations_pbm, simulations_csdm)
+simulations$method <- ifelse(simulations$cal == "expert", "expert", 
+                             ifelse(simulations$cal %in% models, "correlative", "fitted"))
+simulations <- simulations %>%
+  group_by(ssp, gcm, method, year) %>%
+  summarise(y = mean(y)) %>% ungroup()
+
+df <- 6 # equivalent number of degrees of freedom, if NULL => automatic
+source(file.path(wd, "figures_updated", "scripts", "cubic_splines.R"))
+
+source(file.path(wd, "figures_updated", "scripts", "anova_forced_outputs4.R"))
+
+# plot_grid(
+#   plot_grid(trend_unc, unc_decomp  + theme(legend.position = 'none'), rel_widths = c(0.6, 0.37)),
+#   get_legend(unc_decomp), 
+#   ncol = 1, 
+#   rel_heights = c(1,0.1))
+
+atlantic_trend_unc <- trend_unc
+atlantic_unc_decomp <- unc_decomp
+
+```
+
+```{r continental_fagus, fig.height = 60, fig.cap = "Continental", eval = FALSE}
+
+reload_data <- FALSE
+
+species <- "fagus_sylvatica"
+
+baseline <- 1970:2000 # define temporal baseline (= reference)
+
+calibrations <- c("expert", paste0("subset",rep(1:10, each = 10),"_rep", 1:10))
+scenarios <- c("ssp245", "ssp585")
+gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
+
+ecoregion <- "Continental"
+
+# load simulations
+if(reload_data){
+  # load simulations of PBMs
+  ncores <- 2
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness.R"))
+  saveRDS(simulations_pbm, file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_fsyl_continental.rds"))
+
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness_csdm.R"))
+  saveRDS(simulations_csdm, file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_fsyl_continental.rds"))
+  
+}else{
+  simulations_pbm <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_fsyl_continental.rds"))
+  simulations_csdm <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_fsyl_continental.rds"))
+}
+
+# 21-year average fitness
+simulations_pbm <- simulations_pbm %>%
+  group_by(cal, gcm, ssp) %>% 
+  mutate(y = rollapply(y,21,mean,align='center',fill=NA)) %>%
+  ungroup %>% na.omit()
+
+# ensemble by method
+simulations <- rbind(simulations_pbm, simulations_csdm)
+simulations$method <- ifelse(simulations$cal == "expert", "expert", 
+                             ifelse(simulations$cal %in% models, "correlative", "fitted"))
+simulations <- simulations %>%
+  group_by(ssp, gcm, method, year) %>%
+  summarise(y = mean(y)) %>% ungroup()
+
+df <- 6 # equivalent number of degrees of freedom, if NULL => automatic
+source(file.path(wd, "figures_updated", "scripts", "cubic_splines.R"))
+
+source(file.path(wd, "figures_updated", "scripts", "anova_forced_outputs4.R"))
+
+# plot_grid(
+#   plot_grid(trend_unc, unc_decomp  + theme(legend.position = 'none'), rel_widths = c(0.6, 0.37)),
+#   get_legend(unc_decomp), 
+#   ncol = 1, 
+#   rel_heights = c(1,0.1))
+
+continental_trend_unc <- trend_unc
+continental_unc_decomp <- unc_decomp
+
+
+```
+
+```{r mediterranean_fagus, fig.height = 60, fig.cap = "Mediterranean", eval = FALSE}
+
+reload_data <- FALSE
+
+species <- "fagus_sylvatica"
+
+baseline <- 1970:2000 # define temporal baseline (= reference)
+
+calibrations <- c("expert", paste0("subset",rep(1:10, each = 10),"_rep", 1:10))
+scenarios <- c("ssp245", "ssp585")
+gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
+
+ecoregion <- "Mediterranean"
+
+# load simulations
+if(reload_data){
+  # load simulations of PBMs
+  ncores <- 2
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness.R"))
+  saveRDS(simulations_pbm, file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_fsyl_mediterranean.rds"))
+
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness_csdm.R"))
+  saveRDS(simulations_csdm, file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_fsyl_mediterranean.rds"))
+  
+}else{
+  simulations_pbm <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_fsyl_mediterranean.rds"))
+  simulations_csdm <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_fsyl_mediterranean.rds"))
+}
+
+# 21-year average fitness
+simulations_pbm <- simulations_pbm %>%
+  group_by(cal, gcm, ssp) %>% 
+  mutate(y = rollapply(y,21,mean,align='center',fill=NA)) %>%
+  ungroup %>% na.omit()
+
+# ensemble by method
+simulations <- rbind(simulations_pbm, simulations_csdm)
+simulations$method <- ifelse(simulations$cal == "expert", "expert", 
+                             ifelse(simulations$cal %in% models, "correlative", "fitted"))
+simulations <- simulations %>%
+  group_by(ssp, gcm, method, year) %>%
+  summarise(y = mean(y)) %>% ungroup()
+
+df <- 6 # equivalent number of degrees of freedom, if NULL => automatic
+source(file.path(wd, "figures_updated", "scripts", "cubic_splines.R"))
+
+source(file.path(wd, "figures_updated", "scripts", "anova_forced_outputs4.R"))
+
+# plot_grid(
+#   plot_grid(trend_unc, unc_decomp  + theme(legend.position = 'none'), rel_widths = c(0.6, 0.37)),
+#   get_legend(unc_decomp), 
+#   ncol = 1, 
+#   rel_heights = c(1,0.1))
+
+mediterranean_trend_unc <- trend_unc
+mediterranean_unc_decomp <- unc_decomp
+
+
+```
+
+```{r boreal_fagus, fig.height = 60, fig.cap = "Boreal", eval = FALSE}
+
+reload_data <- FALSE
+
+species <- "fagus_sylvatica"
+
+baseline <- 1970:2000 # define temporal baseline (= reference)
+
+calibrations <- c("expert", paste0("subset",rep(1:10, each = 10),"_rep", 1:10))
+scenarios <- c("ssp245", "ssp585")
+gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
+
+ecoregion <- "Boreal"
+
+# load simulations
+if(reload_data){
+  # load simulations of PBMs
+  ncores <- 2
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness.R"))
+  saveRDS(simulations_pbm, file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_fsyl_boreal.rds"))
+
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness_csdm.R"))
+  saveRDS(simulations_csdm, file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_fsyl_boreal.rds"))
+  
+}else{
+  simulations_pbm <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_fsyl_boreal.rds"))
+  simulations_csdm <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_fsyl_boreal.rds"))
+}
+
+# 21-year average fitness
+simulations_pbm <- simulations_pbm %>%
+  group_by(cal, gcm, ssp) %>% 
+  mutate(y = rollapply(y,21,mean,align='center',fill=NA)) %>%
+  ungroup %>% na.omit()
+
+# ensemble by method
+simulations <- rbind(simulations_pbm, simulations_csdm)
+simulations$method <- ifelse(simulations$cal == "expert", "expert", 
+                             ifelse(simulations$cal %in% models, "correlative", "fitted"))
+simulations <- simulations %>%
+  group_by(ssp, gcm, method, year) %>%
+  summarise(y = mean(y)) %>% ungroup()
+
+df <- 6 # equivalent number of degrees of freedom, if NULL => automatic
+source(file.path(wd, "figures_updated", "scripts", "cubic_splines.R"))
+
+source(file.path(wd, "figures_updated", "scripts", "anova_forced_outputs4.R"))
+
+# plot_grid(
+#   plot_grid(trend_unc, unc_decomp  + theme(legend.position = 'none'), rel_widths = c(0.6, 0.37)),
+#   get_legend(unc_decomp), 
+#   ncol = 1, 
+#   rel_heights = c(1,0.1))
+
+boreal_trend_unc <- trend_unc
+boreal_unc_decomp <- unc_decomp
+
+
+```
+
+```{r alpine_fagus, fig.height = 60, fig.cap = "Alpine", eval = FALSE}
+
+reload_data <- FALSE
+
+species <- "fagus_sylvatica"
+
+baseline <- 1970:2000 # define temporal baseline (= reference)
+
+calibrations <- c("expert", paste0("subset",rep(1:10, each = 10),"_rep", 1:10))
+scenarios <- c("ssp245", "ssp585")
+gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
+
+ecoregion <- "Alpine"
+
+# load simulations
+if(reload_data){
+  # load simulations of PBMs
+  ncores <- 2
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness.R"))
+  saveRDS(simulations_pbm, file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_fsyl_alpine.rds"))
+
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness_csdm.R"))
+  saveRDS(simulations_csdm, file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_fsyl_alpine.rds"))
+  
+}else{
+  simulations_pbm <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_fsyl_alpine.rds"))
+  simulations_csdm <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_fsyl_alpine.rds"))
+}
+
+# 21-year average fitness
+simulations_pbm <- simulations_pbm %>%
+  group_by(cal, gcm, ssp) %>% 
+  mutate(y = rollapply(y,21,mean,align='center',fill=NA)) %>%
+  ungroup %>% na.omit()
+
+# ensemble by method
+simulations <- rbind(simulations_pbm, simulations_csdm)
+simulations$method <- ifelse(simulations$cal == "expert", "expert", 
+                             ifelse(simulations$cal %in% models, "correlative", "fitted"))
+simulations <- simulations %>%
+  group_by(ssp, gcm, method, year) %>%
+  summarise(y = mean(y)) %>% ungroup()
+
+df <- 6 # equivalent number of degrees of freedom, if NULL => automatic
+source(file.path(wd, "figures_updated", "scripts", "cubic_splines.R"))
+
+source(file.path(wd, "figures_updated", "scripts", "anova_forced_outputs4.R"))
+
+# plot_grid(
+#   plot_grid(trend_unc, unc_decomp  + theme(legend.position = 'none'), rel_widths = c(0.6, 0.37)),
+#   get_legend(unc_decomp), 
+#   ncol = 1, 
+#   rel_heights = c(1,0.1))
+
+alpine_trend_unc <- trend_unc
+alpine_unc_decomp <- unc_decomp
+
+```
+
+```{r assemble_fagus, fig.height = 110, fig.width = 160, fig.cap = "Uncertainties", dev = "cairo_pdf", eval = FALSE}
+
+plot_grid(
+  plot_grid(NULL, 
+            continental_trend_unc + labs(y = "\n") + 
+              theme(panel.border = element_rect(colour = "#e9c46a", fill=NA, linewidth=0.6)), 
+            NULL, 
+            boreal_trend_unc + labs(y = "\n") + 
+              scale_y_continuous(position = "right") + 
+              theme(panel.border = element_rect(colour = "#2a9d8f", fill=NA, linewidth=0.6)), 
+            NULL, 
+            rel_widths = c(0.2, 1, 0.2, 1, 0.1), nrow = 1),
+  plot_grid(atlantic_trend_unc + 
+              theme(panel.border = element_rect(colour = "#80b25b", fill=NA, linewidth=0.6)), 
+            NULL, 
+            ecoregions_map, 
+            NULL, 
+            rel_widths = c(1, 0.2, 0.9, 0.4), nrow = 1),
+  plot_grid(NULL, mediterranean_trend_unc + labs(y = "\n") + 
+              theme(panel.border = element_rect(colour = "#e76f51", fill=NA, linewidth=0.6)), 
+            NULL, 
+            alpine_trend_unc + labs(y = "\n") + 
+              scale_y_continuous(position = "right") + 
+              theme(panel.border = element_rect(colour = "#c0ddf0", fill=NA, linewidth=0.6)), 
+            NULL, 
+            rel_widths = c(0.2, 1, 0.2, 1, 0.1), nrow = 1),
+  ncol = 1, axis = "tb", align = "v") +
+  draw_line(
+    x = c(1.2/2.5, 0.51),
+    y = c(0.2, 0.4),
+    color = "#e76f51", size = 0.3
+  ) +
+  draw_grob(pointsGrob(x = 0.51, y = 0.4, size = unit(2, "pt"), pch = 21, gp = gpar(fill = "#e76f51", col = "white", lex = 0.6))) +
+  draw_line(
+    x = c(0.66, 0.57),
+    y = c(0.315, 0.45),
+    color = "#c0ddf0", size = 0.3
+  ) +
+  draw_grob(pointsGrob(x = 0.57, y = 0.45, size = unit(2, "pt"), pch = 21, gp = gpar(fill = "#c0ddf0", col = "white", lex = 0.6))) +
+  draw_line(
+    x = c(1/2.5, 0.535),
+    y = c(0.5, 0.46),
+    color = "#80b25b", size = 0.3
+  ) +
+  draw_grob(pointsGrob(x = 0.535, y = 0.46, size = unit(2, "pt"), pch = 21, gp = gpar(fill = "#80b25b", col = "white", lex = 0.5))) +
+  draw_line(
+    x = c(1.2/2.5, 0.58),
+    y = c(0.8, 0.475),
+    color = "#e9c46a", size = 0.3
+  ) +
+  draw_grob(pointsGrob(x = 0.58, y = 0.475, size = unit(2, "pt"), pch = 21, gp = gpar(fill = "#e9c46a", col = "white", lex = 0.5))) +
+  draw_line(
+    x = c(0.63, 0.65),
+    y = c(0.56, 0.722),
+    color = "#2a9d8f", size = 0.3
+  ) +
+  draw_grob(pointsGrob(x = 0.63, y = 0.56, size = unit(2, "pt"), pch = 21, gp = gpar(fill = "#2a9d8f", col = "white", lex = 0.5)))
+
+
+```
+
+```{r atlantic_quercus, fig.height = 60, fig.cap = "Atlantic", eval = FALSE}
+
+reload_data <- FALSE
+
+species <- "quercus_robur"
+
+baseline <- 1970:2000 # define temporal baseline (= reference)
+
+calibrations <- c("expert", paste0("subset",rep(1:2, each = 5),"_rep", 1:5))
+scenarios <- c("ssp245", "ssp585")
+gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
+
+ecoregion <- "Atlantic"
+
+# load simulations
+if(reload_data){
+  # load simulations of PBMs
+  ncores <- 5
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness.R"))
+  saveRDS(simulations_pbm, file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_atlantic.rds"))
+
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness_csdm.R"))
+  saveRDS(simulations_csdm, file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_atlantic.rds"))
+  
+}else{
+  simulations_pbm <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_atlantic.rds"))
+  simulations_csdm <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_atlantic.rds"))
+}
+
+# 21-year average fitness
+simulations_pbm <- simulations_pbm %>%
+  group_by(cal, gcm, ssp) %>% 
+  mutate(y = rollapply(y,21,mean,align='center',fill=NA)) %>%
+  ungroup %>% na.omit()
+
+# ensemble by method
+simulations <- rbind(simulations_pbm, simulations_csdm)
+simulations$method <- ifelse(simulations$cal == "expert", "expert", 
+                             ifelse(simulations$cal %in% models, "correlative", "fitted"))
+simulations <- simulations %>%
+  group_by(ssp, gcm, method, year) %>%
+  summarise(y = mean(y)) %>% ungroup()
+
+df <- 6 # equivalent number of degrees of freedom, if NULL => automatic
+source(file.path(wd, "figures_updated", "scripts", "cubic_splines.R"))
+
+source(file.path(wd, "figures_updated", "scripts", "anova_forced_outputs4.R"))
+
+# plot_grid(
+#   plot_grid(trend_unc, unc_decomp  + theme(legend.position = 'none'), rel_widths = c(0.6, 0.37)),
+#   get_legend(unc_decomp), 
+#   ncol = 1, 
+#   rel_heights = c(1,0.1))
+
+atlantic_trend_unc <- trend_unc
+atlantic_unc_decomp <- unc_decomp
+
+```
+
+```{r continental_quercus, fig.height = 60, fig.cap = "Continental", eval = FALSE}
+
+reload_data <- FALSE
+
+species <- "quercus_robur"
+
+baseline <- 1970:2000 # define temporal baseline (= reference)
+
+calibrations <- c("expert", paste0("subset",rep(1:2, each = 5),"_rep", 1:5))
+scenarios <- c("ssp245", "ssp585")
+gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
+
+ecoregion <- "Continental"
+
+# load simulations
+if(reload_data){
+  # load simulations of PBMs
+  ncores <- 2
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness.R"))
+  saveRDS(simulations_pbm, file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_continental.rds"))
+
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness_csdm.R"))
+  saveRDS(simulations_csdm, file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_continental.rds"))
+  
+}else{
+  simulations_pbm <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_continental.rds"))
+  simulations_csdm <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_continental.rds"))
+}
+
+# 21-year average fitness
+simulations_pbm <- simulations_pbm %>%
+  group_by(cal, gcm, ssp) %>% 
+  mutate(y = rollapply(y,21,mean,align='center',fill=NA)) %>%
+  ungroup %>% na.omit()
+
+# ensemble by method
+simulations <- rbind(simulations_pbm, simulations_csdm)
+simulations$method <- ifelse(simulations$cal == "expert", "expert", 
+                             ifelse(simulations$cal %in% models, "correlative", "fitted"))
+simulations <- simulations %>%
+  group_by(ssp, gcm, method, year) %>%
+  summarise(y = mean(y)) %>% ungroup()
+
+df <- 6 # equivalent number of degrees of freedom, if NULL => automatic
+source(file.path(wd, "figures_updated", "scripts", "cubic_splines.R"))
+
+source(file.path(wd, "figures_updated", "scripts", "anova_forced_outputs4.R"))
+
+# plot_grid(
+#   plot_grid(trend_unc, unc_decomp  + theme(legend.position = 'none'), rel_widths = c(0.6, 0.37)),
+#   get_legend(unc_decomp), 
+#   ncol = 1, 
+#   rel_heights = c(1,0.1))
+
+continental_trend_unc <- trend_unc
+continental_unc_decomp <- unc_decomp
+
+
+```
+
+```{r mediterranean_quercus, fig.height = 60, fig.cap = "Mediterranean", eval = FALSE}
+
+reload_data <- FALSE
+
+species <- "quercus_robur"
+
+baseline <- 1970:2000 # define temporal baseline (= reference)
+
+calibrations <- c("expert", paste0("subset",rep(1:2, each = 5),"_rep", 1:5))
+scenarios <- c("ssp245", "ssp585")
+gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
+
+ecoregion <- "Mediterranean"
+
+# load simulations
+if(reload_data){
+  # load simulations of PBMs
+  ncores <- 2
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness.R"))
+  saveRDS(simulations_pbm, file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_mediterranean.rds"))
+
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness_csdm.R"))
+  saveRDS(simulations_csdm, file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_mediterranean.rds"))
+  
+}else{
+  simulations_pbm <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_mediterranean.rds"))
+  simulations_csdm <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_mediterranean.rds"))
+}
+
+# 21-year average fitness
+simulations_pbm <- simulations_pbm %>%
+  group_by(cal, gcm, ssp) %>% 
+  mutate(y = rollapply(y,21,mean,align='center',fill=NA)) %>%
+  ungroup %>% na.omit()
+
+# ensemble by method
+simulations <- rbind(simulations_pbm, simulations_csdm)
+simulations$method <- ifelse(simulations$cal == "expert", "expert", 
+                             ifelse(simulations$cal %in% models, "correlative", "fitted"))
+simulations <- simulations %>%
+  group_by(ssp, gcm, method, year) %>%
+  summarise(y = mean(y)) %>% ungroup()
+
+df <- 6 # equivalent number of degrees of freedom, if NULL => automatic
+source(file.path(wd, "figures_updated", "scripts", "cubic_splines.R"))
+
+source(file.path(wd, "figures_updated", "scripts", "anova_forced_outputs4.R"))
+
+# plot_grid(
+#   plot_grid(trend_unc, unc_decomp  + theme(legend.position = 'none'), rel_widths = c(0.6, 0.37)),
+#   get_legend(unc_decomp), 
+#   ncol = 1, 
+#   rel_heights = c(1,0.1))
+
+mediterranean_trend_unc <- trend_unc
+mediterranean_unc_decomp <- unc_decomp
+
+
+```
+
+```{r boreal_quercus, fig.height = 60, fig.cap = "Boreal", eval = FALSE}
+
+reload_data <- FALSE
+
+species <- "quercus_robur"
+
+baseline <- 1970:2000 # define temporal baseline (= reference)
+
+calibrations <- c("expert", paste0("subset",rep(1:2, each = 5),"_rep", 1:5))
+scenarios <- c("ssp245", "ssp585")
+gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
+
+ecoregion <- "Boreal"
+
+# load simulations
+if(reload_data){
+  # load simulations of PBMs
+  ncores <- 2
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness.R"))
+  saveRDS(simulations_pbm, file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_boreal.rds"))
+
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness_csdm.R"))
+  saveRDS(simulations_csdm, file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_boreal.rds"))
+  
+}else{
+  simulations_pbm <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_boreal.rds"))
+  simulations_csdm <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_boreal.rds"))
+}
+
+# 21-year average fitness
+simulations_pbm <- simulations_pbm %>%
+  group_by(cal, gcm, ssp) %>% 
+  mutate(y = rollapply(y,21,mean,align='center',fill=NA)) %>%
+  ungroup %>% na.omit()
+
+# ensemble by method
+simulations <- rbind(simulations_pbm, simulations_csdm)
+simulations$method <- ifelse(simulations$cal == "expert", "expert", 
+                             ifelse(simulations$cal %in% models, "correlative", "fitted"))
+simulations <- simulations %>%
+  group_by(ssp, gcm, method, year) %>%
+  summarise(y = mean(y)) %>% ungroup()
+
+df <- 6 # equivalent number of degrees of freedom, if NULL => automatic
+source(file.path(wd, "figures_updated", "scripts", "cubic_splines.R"))
+
+source(file.path(wd, "figures_updated", "scripts", "anova_forced_outputs4.R"))
+
+# plot_grid(
+#   plot_grid(trend_unc, unc_decomp  + theme(legend.position = 'none'), rel_widths = c(0.6, 0.37)),
+#   get_legend(unc_decomp), 
+#   ncol = 1, 
+#   rel_heights = c(1,0.1))
+
+boreal_trend_unc <- trend_unc
+boreal_unc_decomp <- unc_decomp
+
+
+```
+
+```{r alpine_quercus, fig.height = 60, fig.cap = "Alpine", eval = FALSE}
+
+reload_data <- FALSE
+
+species <- "quercus_robur"
+
+baseline <- 1970:2000 # define temporal baseline (= reference)
+
+calibrations <- c("expert", paste0("subset",rep(1:2, each = 5),"_rep", 1:5))
+scenarios <- c("ssp245", "ssp585")
+gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
+
+ecoregion <- "Alpine"
+
+# load simulations
+if(reload_data){
+  # load simulations of PBMs
+  ncores <- 2
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness.R"))
+  saveRDS(simulations_pbm, file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_alpine.rds"))
+
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness_csdm.R"))
+  saveRDS(simulations_csdm, file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_alpine.rds"))
+  
+}else{
+  simulations_pbm <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_alpine.rds"))
+  simulations_csdm <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_alpine.rds"))
+}
+
+# 21-year average fitness
+simulations_pbm <- simulations_pbm %>%
+  group_by(cal, gcm, ssp) %>% 
+  mutate(y = rollapply(y,21,mean,align='center',fill=NA)) %>%
+  ungroup %>% na.omit()
+
+# ensemble by method
+simulations <- rbind(simulations_pbm, simulations_csdm)
+simulations$method <- ifelse(simulations$cal == "expert", "expert", 
+                             ifelse(simulations$cal %in% models, "correlative", "fitted"))
+simulations <- simulations %>%
+  group_by(ssp, gcm, method, year) %>%
+  summarise(y = mean(y)) %>% ungroup()
+
+df <- 6 # equivalent number of degrees of freedom, if NULL => automatic
+source(file.path(wd, "figures_updated", "scripts", "cubic_splines.R"))
+
+source(file.path(wd, "figures_updated", "scripts", "anova_forced_outputs4.R"))
+
+# plot_grid(
+#   plot_grid(trend_unc, unc_decomp  + theme(legend.position = 'none'), rel_widths = c(0.6, 0.37)),
+#   get_legend(unc_decomp), 
+#   ncol = 1, 
+#   rel_heights = c(1,0.1))
+
+alpine_trend_unc <- trend_unc
+alpine_unc_decomp <- unc_decomp
+
+```
+
+```{r assemble_quercus, fig.height = 110, fig.width = 160, fig.cap = "Uncertainties", dev = "cairo_pdf", eval = FALSE}
+
+plot_grid(
+  plot_grid(NULL, 
+            continental_trend_unc + labs(y = "\n") + 
+              theme(panel.border = element_rect(colour = "#e9c46a", fill=NA, linewidth=0.6)), 
+            NULL, 
+            boreal_trend_unc + labs(y = "\n") + 
+              scale_y_continuous(position = "right") + 
+              theme(panel.border = element_rect(colour = "#2a9d8f", fill=NA, linewidth=0.6)), 
+            NULL, 
+            rel_widths = c(0.2, 1, 0.2, 1, 0.1), nrow = 1),
+  plot_grid(atlantic_trend_unc + 
+              theme(panel.border = element_rect(colour = "#80b25b", fill=NA, linewidth=0.6)), 
+            NULL, 
+            ecoregions_map, 
+            NULL, 
+            rel_widths = c(1, 0.2, 0.9, 0.4), nrow = 1),
+  plot_grid(NULL, mediterranean_trend_unc + labs(y = "\n") + 
+              theme(panel.border = element_rect(colour = "#e76f51", fill=NA, linewidth=0.6)), 
+            NULL, 
+            alpine_trend_unc + labs(y = "\n") + 
+              scale_y_continuous(position = "right") + 
+              theme(panel.border = element_rect(colour = "#c0ddf0", fill=NA, linewidth=0.6)), 
+            NULL, 
+            rel_widths = c(0.2, 1, 0.2, 1, 0.1), nrow = 1),
+  ncol = 1, axis = "tb", align = "v") +
+  draw_line(
+    x = c(1.2/2.5, 0.51),
+    y = c(0.2, 0.4),
+    color = "#e76f51", size = 0.3
+  ) +
+  draw_grob(pointsGrob(x = 0.51, y = 0.4, size = unit(2, "pt"), pch = 21, gp = gpar(fill = "#e76f51", col = "white", lex = 0.6))) +
+  draw_line(
+    x = c(0.66, 0.57),
+    y = c(0.315, 0.45),
+    color = "#c0ddf0", size = 0.3
+  ) +
+  draw_grob(pointsGrob(x = 0.57, y = 0.45, size = unit(2, "pt"), pch = 21, gp = gpar(fill = "#c0ddf0", col = "white", lex = 0.6))) +
+  draw_line(
+    x = c(1/2.5, 0.535),
+    y = c(0.5, 0.46),
+    color = "#80b25b", size = 0.3
+  ) +
+  draw_grob(pointsGrob(x = 0.535, y = 0.46, size = unit(2, "pt"), pch = 21, gp = gpar(fill = "#80b25b", col = "white", lex = 0.5))) +
+  draw_line(
+    x = c(1.2/2.5, 0.58),
+    y = c(0.8, 0.475),
+    color = "#e9c46a", size = 0.3
+  ) +
+  draw_grob(pointsGrob(x = 0.58, y = 0.475, size = unit(2, "pt"), pch = 21, gp = gpar(fill = "#e9c46a", col = "white", lex = 0.5))) +
+  draw_line(
+    x = c(0.63, 0.65),
+    y = c(0.56, 0.722),
+    color = "#2a9d8f", size = 0.3
+  ) +
+  draw_grob(pointsGrob(x = 0.63, y = 0.56, size = unit(2, "pt"), pch = 21, gp = gpar(fill = "#2a9d8f", col = "white", lex = 0.5)))
+
+
+```
+
+```{r atlantic_all_wpsecies, fig.height = 60, fig.cap = "Atlantic", eval = FALSE}
+scenarios <- c("ssp245", "ssp585")
+gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
+
+ecoregion <- "Atlantic"
+reload_data <- FALSE
+
+species <- "quercus_robur"
+calibrations <- c("expert", paste0("subset",rep(1:2, each = 5),"_rep", 1:5))
+# load quercus simulations
+if(reload_data){
+  # load simulations of PBMs
+  ncores <- 5
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness.R"))
+  saveRDS(simulations_pbm, file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_atlantic.rds"))
+
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness_csdm.R"))
+  saveRDS(simulations_csdm, file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_atlantic.rds"))
+  
+}else{
+  simulations_pbm_qr <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_atlantic.rds"))
+  simulations_csdm_qr <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_atlantic.rds"))
+}
+
+# 21-year average fitness
+simulations_pbm_qr <- simulations_pbm_qr %>%
+  group_by(cal, gcm, ssp) %>% 
+  mutate(y = rollapply(y,21,mean,align='center',fill=NA)) %>%
+  ungroup %>% na.omit()
+
+# ensemble by method
+simulations_qr <- rbind(simulations_pbm_qr, simulations_csdm_qr)
+simulations_qr$method <- ifelse(simulations_qr$cal == "expert", "expert", 
+                             ifelse(simulations_qr$cal %in% models, "correlative", "fitted"))
+simulations_qr <- simulations_qr %>%
+  group_by(ssp, gcm, method, year) %>%
+  summarise(y = mean(y), species = "quercus_robur") %>% ungroup()
+
+species <- "fagus_sylvatica"
+calibrations <- c("expert", paste0("subset",rep(1:10, each = 10),"_rep", 1:10))
+# load fagus simulations
+if(reload_data){
+  # load simulations of PBMs
+  ncores <- 5
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness.R"))
+  saveRDS(simulations_pbm, file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_atlantic.rds"))
+
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness_csdm.R"))
+  saveRDS(simulations_csdm, file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_atlantic.rds"))
+  
+}else{
+  simulations_pbm_fs <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_fsyl_atlantic.rds"))
+  simulations_csdm_fs <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_fsyl_atlantic.rds"))
+}
+
+# 21-year average fitness
+simulations_pbm_fs <- simulations_pbm_fs %>%
+  group_by(cal, gcm, ssp) %>% 
+  mutate(y = rollapply(y,21,mean,align='center',fill=NA)) %>%
+  ungroup %>% na.omit()
+
+# ensemble by method
+simulations_fs <- rbind(simulations_pbm_fs, simulations_csdm_fs)
+simulations_fs$method <- ifelse(simulations_fs$cal == "expert", "expert", 
+                             ifelse(simulations_fs$cal %in% models, "correlative", "fitted"))
+simulations_fs <- simulations_fs %>%
+  group_by(ssp, gcm, method, year) %>%
+  summarise(y = mean(y), species = "fagus_sylvatica") %>% ungroup()
+
+simulations <- rbind(simulations_fs, simulations_qr) %>%
+  group_by(ssp, gcm, method, species, year) %>%
+  summarise(y = mean(y)) %>% ungroup()
+
+
+species <- c("fagus_sylvatica", "quercus_robur")
+df <- 6 # equivalent number of degrees of freedom, if NULL => automatic
+source(file.path(wd, "figures_updated", "scripts", "cubic_splines_wspecies.R"))
+
+source(file.path(wd, "figures_updated", "scripts", "anova_forced_outputs_wspecies.R"))
+
+# plot_grid(
+#   plot_grid(trend_unc, unc_decomp  + theme(legend.position = 'none'), rel_widths = c(0.6, 0.37)),
+#   get_legend(unc_decomp),
+#   ncol = 1,
+#   rel_heights = c(1,0.1))
+
+atlantic_trend_unc <- trend_unc
+atlantic_unc_decomp <- unc_decomp
+
+```
+
+```{r boreal_all_wpsecies, fig.height = 60, fig.cap = "Atlantic", eval = FALSE}
+
+ecoregion <- "Boreal"
+reload_data <- FALSE
+
+species <- "quercus_robur"
+calibrations <- c("expert", paste0("subset",rep(1:2, each = 5),"_rep", 1:5))
+# load quercus simulations
+if(reload_data){
+  # load simulations of PBMs
+  ncores <- 5
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness.R"))
+  saveRDS(simulations_pbm, file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_boreal.rds"))
+
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness_csdm.R"))
+  saveRDS(simulations_csdm, file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_boreal.rds"))
+  
+}else{
+  simulations_pbm_qr <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_boreal.rds"))
+  simulations_csdm_qr <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_boreal.rds"))
+}
+
+# 21-year average fitness
+simulations_pbm_qr <- simulations_pbm_qr %>%
+  group_by(cal, gcm, ssp) %>% 
+  mutate(y = rollapply(y,21,mean,align='center',fill=NA)) %>%
+  ungroup %>% na.omit()
+
+# ensemble by method
+simulations_qr <- rbind(simulations_pbm_qr, simulations_csdm_qr)
+simulations_qr$method <- ifelse(simulations_qr$cal == "expert", "expert", 
+                             ifelse(simulations_qr$cal %in% models, "correlative", "fitted"))
+simulations_qr <- simulations_qr %>%
+  group_by(ssp, gcm, method, year) %>%
+  summarise(y = mean(y), species = "quercus_robur") %>% ungroup()
+
+species <- "fagus_sylvatica"
+calibrations <- c("expert", paste0("subset",rep(1:10, each = 10),"_rep", 1:10))
+# load fagus simulations
+if(reload_data){
+  # load simulations of PBMs
+  ncores <- 5
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness.R"))
+  saveRDS(simulations_pbm, file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_boreal.rds"))
+
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness_csdm.R"))
+  saveRDS(simulations_csdm, file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_boreal.rds"))
+  
+}else{
+  simulations_pbm_fs <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_fsyl_boreal.rds"))
+  simulations_csdm_fs <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_fsyl_boreal.rds"))
+}
+
+# 21-year average fitness
+simulations_pbm_fs <- simulations_pbm_fs %>%
+  group_by(cal, gcm, ssp) %>% 
+  mutate(y = rollapply(y,21,mean,align='center',fill=NA)) %>%
+  ungroup %>% na.omit()
+
+# ensemble by method
+simulations_fs <- rbind(simulations_pbm_fs, simulations_csdm_fs)
+simulations_fs$method <- ifelse(simulations_fs$cal == "expert", "expert", 
+                             ifelse(simulations_fs$cal %in% models, "correlative", "fitted"))
+simulations_fs <- simulations_fs %>%
+  group_by(ssp, gcm, method, year) %>%
+  summarise(y = mean(y), species = "fagus_sylvatica") %>% ungroup()
+
+simulations <- rbind(simulations_fs, simulations_qr) %>%
+  group_by(ssp, gcm, method, species, year) %>%
+  summarise(y = mean(y)) %>% ungroup()
+
+
+species <- c("fagus_sylvatica", "quercus_robur")
+df <- 6 # equivalent number of degrees of freedom, if NULL => automatic
+source(file.path(wd, "figures_updated", "scripts", "cubic_splines_wspecies.R"))
+
+source(file.path(wd, "figures_updated", "scripts", "anova_forced_outputs_wspecies.R"))
+
+# plot_grid(
+#   plot_grid(trend_unc, unc_decomp  + theme(legend.position = 'none'), rel_widths = c(0.6, 0.37)),
+#   get_legend(unc_decomp),
+#   ncol = 1,
+#   rel_heights = c(1,0.1))
+
+boreal_trend_unc <- trend_unc
+boreal_unc_decomp <- unc_decomp
+
+```
+
+```{r mediterranean_all_wpsecies, fig.height = 60, fig.cap = "Atlantic", eval = FALSE}
+
+ecoregion <- "Mediterranean"
+reload_data <- FALSE
+
+species <- "quercus_robur"
+calibrations <- c("expert", paste0("subset",rep(1:2, each = 5),"_rep", 1:5))
+# load quercus simulations
+if(reload_data){
+  # load simulations of PBMs
+  ncores <- 5
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness.R"))
+  saveRDS(simulations_pbm, file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_mediterranean.rds"))
+
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness_csdm.R"))
+  saveRDS(simulations_csdm, file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_mediterranean.rds"))
+  
+}else{
+  simulations_pbm_qr <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_mediterranean.rds"))
+  simulations_csdm_qr <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_mediterranean.rds"))
+}
+
+# 21-year average fitness
+simulations_pbm_qr <- simulations_pbm_qr %>%
+  group_by(cal, gcm, ssp) %>% 
+  mutate(y = rollapply(y,21,mean,align='center',fill=NA)) %>%
+  ungroup %>% na.omit()
+
+# ensemble by method
+simulations_qr <- rbind(simulations_pbm_qr, simulations_csdm_qr)
+simulations_qr$method <- ifelse(simulations_qr$cal == "expert", "expert", 
+                             ifelse(simulations_qr$cal %in% models, "correlative", "fitted"))
+simulations_qr <- simulations_qr %>%
+  group_by(ssp, gcm, method, year) %>%
+  summarise(y = mean(y), species = "quercus_robur") %>% ungroup()
+
+species <- "fagus_sylvatica"
+calibrations <- c("expert", paste0("subset",rep(1:10, each = 10),"_rep", 1:10))
+# load fagus simulations
+if(reload_data){
+  # load simulations of PBMs
+  ncores <- 5
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness.R"))
+  saveRDS(simulations_pbm, file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_mediterranean.rds"))
+
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness_csdm.R"))
+  saveRDS(simulations_csdm, file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_mediterranean.rds"))
+  
+}else{
+  simulations_pbm_fs <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_fsyl_mediterranean.rds"))
+  simulations_csdm_fs <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_fsyl_mediterranean.rds"))
+}
+
+# 21-year average fitness
+simulations_pbm_fs <- simulations_pbm_fs %>%
+  group_by(cal, gcm, ssp) %>% 
+  mutate(y = rollapply(y,21,mean,align='center',fill=NA)) %>%
+  ungroup %>% na.omit()
+
+# ensemble by method
+simulations_fs <- rbind(simulations_pbm_fs, simulations_csdm_fs)
+simulations_fs$method <- ifelse(simulations_fs$cal == "expert", "expert", 
+                             ifelse(simulations_fs$cal %in% models, "correlative", "fitted"))
+simulations_fs <- simulations_fs %>%
+  group_by(ssp, gcm, method, year) %>%
+  summarise(y = mean(y), species = "fagus_sylvatica") %>% ungroup()
+
+simulations <- rbind(simulations_fs, simulations_qr) %>%
+  group_by(ssp, gcm, method, species, year) %>%
+  summarise(y = mean(y)) %>% ungroup()
+
+
+species <- c("fagus_sylvatica", "quercus_robur")
+df <- 6 # equivalent number of degrees of freedom, if NULL => automatic
+source(file.path(wd, "figures_updated", "scripts", "cubic_splines_wspecies.R"))
+
+source(file.path(wd, "figures_updated", "scripts", "anova_forced_outputs_wspecies.R"))
+
+# plot_grid(
+#   plot_grid(trend_unc, unc_decomp  + theme(legend.position = 'none'), rel_widths = c(0.6, 0.37)),
+#   get_legend(unc_decomp),
+#   ncol = 1,
+#   rel_heights = c(1,0.1))
+
+mediterranean_trend_unc <- trend_unc
+mediterranean_unc_decomp <- unc_decomp
+
+```
+
+```{r continental_all_wpsecies, fig.height = 60, fig.cap = "Atlantic", eval = FALSE}
+
+ecoregion <- "Continental"
+reload_data <- FALSE
+
+species <- "quercus_robur"
+calibrations <- c("expert", paste0("subset",rep(1:2, each = 5),"_rep", 1:5))
+# load quercus simulations
+if(reload_data){
+  # load simulations of PBMs
+  ncores <- 5
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness.R"))
+  saveRDS(simulations_pbm, file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_continental.rds"))
+
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness_csdm.R"))
+  saveRDS(simulations_csdm, file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_continental.rds"))
+  
+}else{
+  simulations_pbm_qr <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_continental.rds"))
+  simulations_csdm_qr <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_continental.rds"))
+}
+
+# 21-year average fitness
+simulations_pbm_qr <- simulations_pbm_qr %>%
+  group_by(cal, gcm, ssp) %>% 
+  mutate(y = rollapply(y,21,mean,align='center',fill=NA)) %>%
+  ungroup %>% na.omit()
+
+# ensemble by method
+simulations_qr <- rbind(simulations_pbm_qr, simulations_csdm_qr)
+simulations_qr$method <- ifelse(simulations_qr$cal == "expert", "expert", 
+                             ifelse(simulations_qr$cal %in% models, "correlative", "fitted"))
+simulations_qr <- simulations_qr %>%
+  group_by(ssp, gcm, method, year) %>%
+  summarise(y = mean(y), species = "quercus_robur") %>% ungroup()
+
+species <- "fagus_sylvatica"
+calibrations <- c("expert", paste0("subset",rep(1:10, each = 10),"_rep", 1:10))
+# load fagus simulations
+if(reload_data){
+  # load simulations of PBMs
+  ncores <- 5
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness.R"))
+  saveRDS(simulations_pbm, file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_continental.rds"))
+
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness_csdm.R"))
+  saveRDS(simulations_csdm, file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_continental.rds"))
+  
+}else{
+  simulations_pbm_fs <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_fsyl_continental.rds"))
+  simulations_csdm_fs <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_fsyl_continental.rds"))
+}
+
+# 21-year average fitness
+simulations_pbm_fs <- simulations_pbm_fs %>%
+  group_by(cal, gcm, ssp) %>% 
+  mutate(y = rollapply(y,21,mean,align='center',fill=NA)) %>%
+  ungroup %>% na.omit()
+
+# ensemble by method
+simulations_fs <- rbind(simulations_pbm_fs, simulations_csdm_fs)
+simulations_fs$method <- ifelse(simulations_fs$cal == "expert", "expert", 
+                             ifelse(simulations_fs$cal %in% models, "correlative", "fitted"))
+simulations_fs <- simulations_fs %>%
+  group_by(ssp, gcm, method, year) %>%
+  summarise(y = mean(y), species = "fagus_sylvatica") %>% ungroup()
+
+simulations <- rbind(simulations_fs, simulations_qr) %>%
+  group_by(ssp, gcm, method, species, year) %>%
+  summarise(y = mean(y)) %>% ungroup()
+
+
+species <- c("fagus_sylvatica", "quercus_robur")
+df <- 6 # equivalent number of degrees of freedom, if NULL => automatic
+source(file.path(wd, "figures_updated", "scripts", "cubic_splines_wspecies.R"))
+
+source(file.path(wd, "figures_updated", "scripts", "anova_forced_outputs_wspecies.R"))
+
+# plot_grid(
+#   plot_grid(trend_unc, unc_decomp  + theme(legend.position = 'none'), rel_widths = c(0.6, 0.37)),
+#   get_legend(unc_decomp),
+#   ncol = 1,
+#   rel_heights = c(1,0.1))
+
+continental_trend_unc <- trend_unc
+continental_unc_decomp <- unc_decomp
+
+```
+
+```{r alpine_all_wpsecies, fig.height = 60, fig.cap = "Atlantic", eval = FALSE}
+
+ecoregion <- "Alpine"
+reload_data <- FALSE
+
+species <- "quercus_robur"
+calibrations <- c("expert", paste0("subset",rep(1:2, each = 5),"_rep", 1:5))
+# load quercus simulations
+if(reload_data){
+  # load simulations of PBMs
+  ncores <- 5
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness.R"))
+  saveRDS(simulations_pbm, file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_alpine.rds"))
+
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness_csdm.R"))
+  saveRDS(simulations_csdm, file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_alpine.rds"))
+  
+}else{
+  simulations_pbm_qr <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_alpine.rds"))
+  simulations_csdm_qr <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_alpine.rds"))
+}
+
+# 21-year average fitness
+simulations_pbm_qr <- simulations_pbm_qr %>%
+  group_by(cal, gcm, ssp) %>% 
+  mutate(y = rollapply(y,21,mean,align='center',fill=NA)) %>%
+  ungroup %>% na.omit()
+
+# ensemble by method
+simulations_qr <- rbind(simulations_pbm_qr, simulations_csdm_qr)
+simulations_qr$method <- ifelse(simulations_qr$cal == "expert", "expert", 
+                             ifelse(simulations_qr$cal %in% models, "correlative", "fitted"))
+simulations_qr <- simulations_qr %>%
+  group_by(ssp, gcm, method, year) %>%
+  summarise(y = mean(y), species = "quercus_robur") %>% ungroup()
+
+species <- "fagus_sylvatica"
+calibrations <- c("expert", paste0("subset",rep(1:10, each = 10),"_rep", 1:10))
+# load fagus simulations
+if(reload_data){
+  # load simulations of PBMs
+  ncores <- 5
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness.R"))
+  saveRDS(simulations_pbm, file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_qrob_alpine.rds"))
+
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness_csdm.R"))
+  saveRDS(simulations_csdm, file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_qrob_alpine.rds"))
+  
+}else{
+  simulations_pbm_fs <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_fsyl_alpine.rds"))
+  simulations_csdm_fs <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_fsyl_alpine.rds"))
+}
+
+# 21-year average fitness
+simulations_pbm_fs <- simulations_pbm_fs %>%
+  group_by(cal, gcm, ssp) %>% 
+  mutate(y = rollapply(y,21,mean,align='center',fill=NA)) %>%
+  ungroup %>% na.omit()
+
+# ensemble by method
+simulations_fs <- rbind(simulations_pbm_fs, simulations_csdm_fs)
+simulations_fs$method <- ifelse(simulations_fs$cal == "expert", "expert", 
+                             ifelse(simulations_fs$cal %in% models, "correlative", "fitted"))
+simulations_fs <- simulations_fs %>%
+  group_by(ssp, gcm, method, year) %>%
+  summarise(y = mean(y), species = "fagus_sylvatica") %>% ungroup()
+
+simulations <- rbind(simulations_fs, simulations_qr) %>%
+  group_by(ssp, gcm, method, species, year) %>%
+  summarise(y = mean(y)) %>% ungroup()
+
+
+species <- c("fagus_sylvatica", "quercus_robur")
+df <- 6 # equivalent number of degrees of freedom, if NULL => automatic
+source(file.path(wd, "figures_updated", "scripts", "cubic_splines_wspecies.R"))
+
+source(file.path(wd, "figures_updated", "scripts", "anova_forced_outputs_wspecies.R"))
+
+# plot_grid(
+#   plot_grid(trend_unc, unc_decomp  + theme(legend.position = 'none'), rel_widths = c(0.6, 0.37)),
+#   get_legend(unc_decomp),
+#   ncol = 1,
+#   rel_heights = c(1,0.1))
+
+alpine_trend_unc <- trend_unc
+alpine_unc_decomp <- unc_decomp
+
+```
+
+```{r assemble_allspecies, fig.height = 120, fig.width = 160, fig.cap = "Uncertainties", dev = "cairo_pdf", eval = FALSE}
+
+plot_grid(
+  plot_grid(NULL, 
+            continental_trend_unc + labs(y = "\n") + 
+              theme(panel.border = element_rect(colour = "#e9c46a", fill=NA, linewidth=0.6)), 
+            NULL, 
+            boreal_trend_unc + labs(y = "\n") + 
+              scale_y_continuous(position = "right") + 
+              theme(panel.border = element_rect(colour = "#2a9d8f", fill=NA, linewidth=0.6)), 
+            NULL, 
+            rel_widths = c(0.2, 1, 0.2, 1, 0.1), nrow = 1),
+  plot_grid(atlantic_trend_unc + 
+              theme(panel.border = element_rect(colour = "#80b25b", fill=NA, linewidth=0.6)), 
+            NULL, 
+            ecoregions_map, 
+            NULL, 
+            rel_widths = c(1, 0.2, 0.9, 0.4), nrow = 1),
+  plot_grid(NULL, mediterranean_trend_unc + labs(y = "\n") + 
+              theme(panel.border = element_rect(colour = "#e76f51", fill=NA, linewidth=0.6)), 
+            NULL, 
+            alpine_trend_unc + labs(y = "\n") + 
+              scale_y_continuous(position = "right") + 
+              theme(panel.border = element_rect(colour = "#c0ddf0", fill=NA, linewidth=0.6)), 
+            NULL, 
+            rel_widths = c(0.2, 1, 0.2, 1, 0.1), nrow = 1),
+  cowplot::get_plot_component(trend_unc + theme(legend.position = "bottom"), 'guide-box-bottom', return_all = TRUE),
+  rel_heights = c(1,1,1,0.3), ncol = 1, axis = "tb", align = "v") +
+  draw_line(
+    x = c(0.479, 0.51),
+    y = c(0.26, 0.41)*122/110,
+    color = "#e76f51", size = 0.3
+  ) +
+  draw_grob(pointsGrob(x = 0.51, y = 0.41*122/110, size = unit(2, "pt"), pch = 21, gp = gpar(fill = "#e76f51", col = "white", lex = 0.6))) +
+  draw_line(
+    x = c(0.66, 0.57),
+    y = c(0.34, 0.45)*122/110,
+    color = "#c0ddf0", size = 0.3
+  ) +
+  draw_grob(pointsGrob(x = 0.57, y = 0.45*122/110, size = unit(2, "pt"), pch = 21, gp = gpar(fill = "#c0ddf0", col = "white", lex = 0.6))) +
+  draw_line(
+    x = c(1/2.5, 0.535),
+    y = c(0.5, 0.46)*122/110,
+    color = "#80b25b", size = 0.3
+  ) +
+  draw_grob(pointsGrob(x = 0.535, y = 0.46*122/110, size = unit(2, "pt"), pch = 21, gp = gpar(fill = "#80b25b", col = "white", lex = 0.5))) +
+  draw_line(
+    x = c(0.479, 0.58),
+    y = c(0.715, 0.475)*122/110,
+    color = "#e9c46a", size = 0.3
+  ) +
+  draw_grob(pointsGrob(x = 0.58, y = 0.475*122/110, size = unit(2, "pt"), pch = 21, gp = gpar(fill = "#e9c46a", col = "white", lex = 0.5))) +
+  draw_line(
+    x = c(0.63, 0.65),
+    y = c(0.54, 0.675)*122/110,
+    color = "#2a9d8f", size = 0.3
+  ) +
+  draw_grob(pointsGrob(x = 0.63, y = 0.54*122/110, size = unit(2, "pt"), pch = 21, gp = gpar(fill = "#2a9d8f", col = "white", lex = 0.5)))
+
+```
+
+
+```{r test, fig.height = 120, fig.width = 180, fig.cap = "All", dev = "cairo_pdf", eval = TRUE}
+
+reload_data <- FALSE
+# countries <- c("Austria", "Belgium", "Bulgaria", "Croatia", "Cyprus", "Czech Republic", "Denmark", "Estonia", "Finland", "France", "Germany",
+#                "Greece", "Hungary", "Ireland", "Italy", "Latvia", "Lithuania", "Netherlands", "Norway", "Poland", "Portugal", "Romania",
+#                "Slovakia", "Slovenia", "Spain", "Sweden", "Switzerland", "United Kingdom", "Bosnia and Herzegovina", "Republic of Serbia",
+#                "Macedonia", "Greece", "Kosovo", "Albania", "Montenegro")
+target_ext <- ext(-10.5, 31.7, 34.6, 71.2)
+
+species <- "abies_alba"
+
+baseline <- 1970:2000 # define temporal baseline (= reference)
+
+calibrations <- c("expert", paste0("subset",rep(1:2, each = 5),"_rep", 1:5))
+scenarios <- c("ssp245", "ssp585")
+gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
+
+# load simulations
+if(reload_data){
+  # load simulations of PBMs
+  ncores <- 3
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness_all.R"))
+  saveRDS(simulations_pbm, file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_aalb_all.rds"))
+
+  source(file.path(wd, "figures_updated", "scripts", "load_yearly_fitness_csdm_all.R"))
+  saveRDS(simulations_csdm, file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_aalb_all.rds"))
+  
+}else{
+  simulations_pbm <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "pbm_aalb_all.rds"))
+  simulations_csdm <- readRDS(file = file.path(wd,"figures_updated","data", "sim_ecoregions", "csdm_aalb_all.rds"))
+}
+
+simulations <- rbind(simulations_pbm,simulations_csdm)
+
+source(file.path(wd, "figures_updated", "scripts", "uncertainty_cascade_v2.R"))
+
+plot_grid(
+  plot_grid(epbm_fit2050 + theme(legend.position = 'none'), 
+            fpbm_fit2050 + theme(legend.position = 'none'), 
+            csdm_fit2050 + theme(legend.position = 'none'),
+            ncol = 1),
+  NULL,
+  plot_grid(NULL, plot_grid(cascade1, NULL, cascade2, nrow = 1, rel_widths = c(1.1,-0.1,1)), 
+            NULL,
+            cowplot::get_plot_component(cascade2 + theme(legend.position = 'bottom'), 'guide-box-bottom', return_all = TRUE), 
+            cowplot::get_plot_component(fpbm_fit2090, 'guide-box-bottom', return_all = TRUE), 
+            ncol = 1, rel_heights = c(1.4,5, 0.8, 0.7, 0.7)),
+  NULL,
+  plot_grid(epbm_fit2090 + theme(legend.position = 'none'), 
+            fpbm_fit2090 + theme(legend.position = 'none'), 
+            csdm_fit2090 + theme(legend.position = 'none'),
+            ncol = 1),
+  ncol = 5, rel_widths = c(1, -0.1, 1.1, -0.1, 1)) +
+  draw_text("2040-2060", x = 2/5, y = 4/5+0.05, size = 8) +
+  draw_text("2080-2100", x = 3/5, y = 4/5+0.05, size = 8) +
+  draw_text("Projected change in suitability\nrelative to 1970-2000", x = 1/2, y = 1/5+0.03, size = 7.5)
+  
+
+```
+
+
+

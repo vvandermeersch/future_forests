@@ -1,0 +1,103 @@
+
+#--------------------------#
+# Run ANOVA on raw outputs #
+#--------------------------#
+
+plan(multisession, workers = 10)
+anova_ss <- foreach(yr = min(simulations$year):max(simulations$year), .combine=rbind) %dofuture% {
+  
+  linfit <- lm(I(y*1e10) ~ gcm + ssp + cal + 
+                 gcm:ssp + gcm:cal + ssp:cal, 
+               data = simulations %>% dplyr::filter(year == yr))
+  anova <- car::Anova(linfit, type = 2)
+  
+  t(data.frame(append(yr, anova$`Sum Sq`)))
+  
+} %>% as.data.frame()
+plan(sequential);gc()
+rownames(anova_ss) <- NULL
+colnames(anova_ss) <-  c("year", 
+                         "gcm", "ssp", "sdm", 
+                         "gcm.ssp", "gcm.sdm", "ssp.sdm",
+                         "residuals")
+
+# Total uncertainty
+anova_ss$tot <- anova_ss$gcm + anova_ss$ssp + anova_ss$sdm + anova_ss$gcm.ssp + anova_ss$gcm.sdm + anova_ss$ssp.sdm + anova_ss$residuals
+
+# Uncertainty decomposition
+cols <- c("residuals" = "#FFBB70", "sdm" = "#7469B6", "sdm:gcm+sdm:ssp" = "#E1AFD1",
+          "ssp" = "#139474", "gcm:ssp" = "#00b9a4", "gcm" = "#135f94")
+unc_decomp <- simulations %>%
+  dplyr::filter(year %in% c(1990:2100)) %>%
+  group_by(year) %>%
+  reframe(meany = mean(y)) %>%
+  left_join(anova_ss) %>%
+  ggplot(aes(x = year)) +
+  geom_ribbon(aes(ymin = 0,
+                  ymax = (gcm+ssp+sdm+gcm.ssp+gcm.sdm+ssp.sdm+residuals)/tot*100, fill = "residuals")) +
+  geom_ribbon(aes(ymin = 0,
+                  ymax = (gcm+ssp+sdm+gcm.ssp+gcm.sdm+ssp.sdm)/tot*100, fill = "sdm")) +
+  geom_ribbon(aes(ymin = 0,
+                  ymax = (gcm+ssp+gcm.ssp+gcm.sdm+ssp.sdm)/tot*100, fill = "sdm:gcm+sdm:ssp")) +
+  geom_ribbon(aes(ymin = 0,
+                  ymax = (gcm+ssp+gcm.ssp)/tot*100, fill = "ssp")) +
+  geom_ribbon(aes(ymin = 0,
+                  ymax = (gcm+gcm.ssp)/tot*100, fill = "gcm:ssp")) +
+  geom_ribbon(aes(ymin = 0,
+                  ymax = (gcm)/tot*100, fill = "gcm")) +
+  coord_cartesian(ylim = c(0,100), xlim = c(2000, 2090), expand = FALSE) +
+  theme_bw() + scale_y_continuous(position = "right") +
+  labs(y = "Fraction of total variance (%)") +
+  scale_x_continuous(breaks = seq(2000, 2090, 15)) +
+  theme(
+    plot.margin = margin(t = 5.5, b = 5.5, r = 5.5, l = 11),
+    axis.title.x = element_blank(), legend.text = element_text(size = 7),
+    axis.text = element_text(size = 7), axis.title.y = element_text(size = 8),
+    legend.title = element_blank(), legend.key.size = unit(8, 'pt')) +
+  scale_fill_manual(values=cols, breaks = c("gcm", "gcm:ssp", "ssp",  "sdm", "sdm:gcm+sdm:ssp", "residuals")) +
+  guides(fill = guide_legend(nrow = 1, byrow = TRUE))
+
+# Trends and uncertainty sources
+trend_unc <- simulations %>%
+  dplyr::filter(year %in% c(2000:2100)) %>%
+  group_by(year) %>%
+  reframe(meany = mean(y), int = sd(y)) %>%
+  left_join(anova_ss, by = join_by(year)) %>%
+  ggplot(aes(x = year, y = meany)) +
+  geom_ribbon(aes(ymin = meany - (1.645*int)*(gcm+ssp+sdm+gcm.ssp+gcm.sdm+ssp.sdm+residuals)/tot,
+                  ymax = meany + (1.645*int)*(gcm+ssp+sdm+gcm.ssp+gcm.sdm+ssp.sdm+residuals)/tot),
+              fill = "#FFBB70") +
+  geom_ribbon(aes(ymin = meany - (1.645*int)*(gcm+ssp+sdm+gcm.ssp+gcm.sdm+ssp.sdm)/tot,
+                  ymax = meany + (1.645*int)*(gcm+ssp+sdm+gcm.ssp+gcm.sdm+ssp.sdm)/tot),
+              fill = "#7469B6") +
+  geom_ribbon(aes(ymin = meany - (1.645*int)*(gcm+ssp+gcm.ssp+gcm.sdm+ssp.sdm)/tot,
+                  ymax = meany + (1.645*int)*(gcm+ssp+gcm.ssp+gcm.sdm+ssp.sdm)/tot),
+              fill = "#E1AFD1") +
+  geom_ribbon(aes(ymin = meany - (1.645*int)*(gcm+ssp+gcm.ssp)/tot,
+                  ymax = meany + (1.645*int)*(gcm+ssp+gcm.ssp)/tot),
+              fill = "#139474") +
+  geom_ribbon(aes(ymin = meany - (1.645*int)*(gcm+gcm.ssp)/tot,
+                  ymax = meany + (1.645*int)*(gcm+gcm.ssp)/tot),
+              fill = "#00b9a4") +
+  geom_ribbon(aes(ymin = meany - (1.645*int)*(gcm)/tot,
+                  ymax = meany + (1.645*int)*(gcm)/tot),
+              fill = "#135f94")+
+  geom_line(linewidth = 1, linetype = "solid", color = "white", alpha = 0.6)+
+  geom_line(alpha = 1, linewidth = 0.5, linetype = "dashed")+
+  coord_cartesian(xlim = c(2000, 2090), ylim = c(-100,100), expand = FALSE) +
+  labs(y = "Projected change in fitness\nrelative to 1970-2000 (%)") +
+  scale_x_continuous(breaks = seq(2000, 2090, 15)) +
+  theme_bw() +
+  theme(
+    plot.margin = margin(t = 5.5, b = 5.5, r = 11, l = 5.5),
+    axis.title.x = element_blank(), legend.text = element_text(size = 7),
+    axis.text = element_text(size = 7), axis.title.y = element_text(size = 8),
+    legend.title = element_blank(), legend.key.size = unit(8, 'pt'),
+    panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank())
+
+
+
+
+
+
+
