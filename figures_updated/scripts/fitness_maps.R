@@ -7,7 +7,8 @@ ctr <- ifel(is.na(ctr), 0, 1) %>% as.polygons()
 
 # maps of fitness change
 fitness_map_2050 <- ggplot() +
-  geom_spatraster(data = subset(sim_fitness,1) %>% crop(ext(-10.5, 31.7, 34.6, 71.2)) %>% project("EPSG:3035")) +
+  geom_spatraster(data = subset(sim_fitness,1) %>% crop(ext(-10.5, 31.7, 34.6, 71.2)) %>% project("EPSG:3035"),
+                  maxcell = 2e+05) +
   scale_fill_gradientn(
     colours = brewer.pal(n = 11, name = "RdBu"),
     na.value = "transparent", limits = c(-1, 1),
@@ -38,7 +39,8 @@ fitness_map_2050 <- ggplot() +
                                          legend.text = element_text(size = 7))))
 
 fitness_map_2090 <- ggplot() +
-  geom_spatraster(data = subset(sim_fitness,2) %>% crop(ext(-10.5, 31.7, 34.6, 71.2)) %>% project("EPSG:3035")) +
+  geom_spatraster(data = subset(sim_fitness,2) %>% crop(ext(-10.5, 31.7, 34.6, 71.2)) %>% project("EPSG:3035"),
+                  maxcell = 2e+05) +
   scale_fill_gradientn(
     colours = brewer.pal(n = 11, name = "RdBu"),
     na.value = "transparent", limits = c(-1, 1),

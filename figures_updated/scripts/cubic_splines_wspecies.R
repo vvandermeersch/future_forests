@@ -1,8 +1,8 @@
 
 methods <- c("expert", "fitted", "correlative")
-Ngcm <- 5
-Nssp <- 2
-Nspecies <- 2
+Ngcm <- length(gcms)
+Nssp <- length(scenarios)
+Nspecies <- length(species_list)
 
 simulations$smy <- NA
 for(m in 1:3){
@@ -19,7 +19,7 @@ for(m in 1:3){
       
       for(sp in 1:Nspecies){
         
-        spi <- species[sp]
+        spi <- species_list[sp]
         
         y <- simulations %>% dplyr::filter(method == ci & ssp == si & gcm == mi & species == spi) %>% dplyr::select(y) %>% unlist()
         x <- simulations %>% dplyr::filter(method == ci & ssp == si & gcm == mi & species == spi) %>% dplyr::select(year) %>% unlist()

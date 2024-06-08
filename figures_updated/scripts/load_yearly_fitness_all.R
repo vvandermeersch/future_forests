@@ -16,7 +16,7 @@
 # number of SSPs/GCMs/SDMs
 Ngcm <- length(gcms)
 Nssp <- length(scenarios)
-Nsdm <- length(calibrations)
+Nsdm <- length(pbms[[species]])
 
 # degree for polynomial fitting (if needed)
 ndeg_poly <- 4
@@ -25,7 +25,7 @@ plan(multisession, workers = ncores)
 simulations_pbm <- foreach(c = 1:Nsdm, .combine=rbind) %dofuture% {
   
   target_ext <- ext(-10.5, 31.7, 34.6, 71.2)
-  ci <- calibrations[c]
+  ci <- pbms[[species]][c]
   
   # eco_map <- unwrap(.eco_map)
   # suit <- rast(file.path(wd, "data", "processed", species, "suit", paste0(ci, ".tif"))) %>% 
@@ -39,7 +39,7 @@ simulations_pbm <- foreach(c = 1:Nsdm, .combine=rbind) %dofuture% {
   
   sim_temp <- data.frame()
   for(m in 1:Ngcm){
-    print(m)
+    # print(m)
     
     mi <- gcms[m]
     indices <- which(names(suit) == paste0(mi, "_hist") & time(suit, format ="years") %in% baseline)

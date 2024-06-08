@@ -30,12 +30,12 @@ data <- simulations %>%
                     ifelse(type == "gcm_mean", 1, 
                            ifelse(type == "method_mean", 2, 
                                   ifelse(type == "ssp_mean", 3, NA))))) %>%
-  dplyr::filter(year == 2030 | year == 2090) %>%
-  mutate(year = ifelse(year == 2030, "2020-2040", "2080-2100")) %>%
+  dplyr::filter(year == 2050 | year == 2090) %>%
+  mutate(year = ifelse(year == 2050, "2050-2060", "2080-2100")) %>%
   dplyr::filter(ssp == "ssp245")
 
 
-yr <- "2020-2040"
+yr <- "2050-2060"
 cascade1 <- ggplot() +
   # ggh4x::facet_wrap2(~ year, nrow = 1, strip.position="left", axes = "all", remove_labels = "all") +
   geom_vline(data = data.frame(y = c(1,2)), aes(xintercept = y),

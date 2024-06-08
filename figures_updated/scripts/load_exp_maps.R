@@ -1,6 +1,6 @@
 
 # Fitness change
-sim_fitness <- lapply(c(2030, 2060, 2090), function(year){
+sim_fitness <- lapply(years, function(year){
   
   wdw <- c((year-10):(year+10))
   
@@ -29,11 +29,11 @@ sim_fitness <- lapply(c(2030, 2060, 2090), function(year){
   return(fitness)
   
 }) %>% rast()
-names(sim_fitness) <- c(2030, 2060, 2090)
+names(sim_fitness) <- years
 saveRDS(sim_fitness, file = file.path(wd,"figures_updated","data","maps", species, "expert", paste0("fitness_", scenario, ".rds")))
 
 # Distribution
-sim_distribution <- lapply(c(2030, 2060, 2090), function(year){
+sim_distribution <- lapply(years, function(year){
   
   wdw <- c((year-10):(year+10))
   
@@ -61,5 +61,5 @@ sim_distribution <- lapply(c(2030, 2060, 2090), function(year){
   return(dist)
   
 }) %>% rast()
-names(sim_distribution) <- c(2030, 2060, 2090)
+names(sim_distribution) <- years
 saveRDS(sim_distribution, file = file.path(wd,"figures_updated","data","maps", species, "expert", paste0("distribution_", scenario, ".rds")))

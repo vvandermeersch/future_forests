@@ -1,6 +1,6 @@
 
 # Fitness change
-plan(multisession, workers = 11)
+plan(multisession, workers = ncores)
 sim_fitness <- lapply(years, function(year){
   
   wdw <- c((year-10):(year+10))
@@ -35,7 +35,7 @@ plan(sequential);gc()
 saveRDS(sim_fitness, file = file.path(wd,"figures_updated","data","maps", species, "fitted", paste0("fitness_", scenario, ".rds")))
 
 # Model agreement on sign of fitness change
-plan(multisession, workers = 10)
+plan(multisession, workers = ncores)
 sim_agreement <- lapply(years, function(year){
   cat(year)
   
@@ -81,7 +81,7 @@ plan(sequential);gc()
 saveRDS(sim_agreement, file = file.path(wd,"figures_updated","data","maps", species, "fitted", paste0("agreement_", scenario, ".rds")))
 
 # Distribution
-plan(multisession, workers = 10)
+plan(multisession, workers = ncores)
 sim_distribution <- lapply(years, function(year){
   
   wdw <- c((year-10):(year+10))

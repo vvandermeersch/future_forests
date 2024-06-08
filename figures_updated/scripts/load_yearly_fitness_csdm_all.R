@@ -16,14 +16,14 @@
 # number of SSPs/GCMs/SDMs
 Ngcm <- length(gcms)
 Nssp <- length(scenarios)
-Nsdm <- length(models)
+Nsdm <- length(csdms)
 
 
 plan(multisession, workers = Nsdm)
 simulations_csdm <- foreach(c = 1:Nsdm, .combine=rbind) %dofuture% {
   
   target_ext <- ext(-10.5, 31.7, 34.6, 71.2)
-  ci <- models[c]
+  ci <- csdms[c]
   
   # eco_map <- unwrap(.eco_map)
   # country_map <- unwrap(.country_map)
