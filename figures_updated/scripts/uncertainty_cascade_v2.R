@@ -35,7 +35,7 @@ data <- simulations %>%
   dplyr::filter(ssp == "ssp245")
 
 
-yr <- "2050-2060"
+yr <- "2040-2060"
 cascade1 <- ggplot() +
   # ggh4x::facet_wrap2(~ year, nrow = 1, strip.position="left", axes = "all", remove_labels = "all") +
   geom_vline(data = data.frame(y = c(1,2)), aes(xintercept = y),

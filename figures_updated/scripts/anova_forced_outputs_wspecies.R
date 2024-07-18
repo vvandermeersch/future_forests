@@ -40,7 +40,7 @@ anova_ss$tot <- anova_ss$gcm + anova_ss$ssp + anova_ss$sdm + anova_ss$species +
   anova_ss$residuals + anova_ss$intvar
 
 # Uncertainty decomposition
-cols <- c("residuals + int. ann. var." = "#a25752", "sdm" = "#7fa688", "sdm:gcm + sdm:ssp" = "#ddb166",
+cols <- c("residuals + int. ann. var." = "#937668", "sdm" = "#7fa688", "sdm:gcm + sdm:ssp" = "#ddb166",
           "ssp" = "#D98B65", "gcm:ssp" = "#D98B65", "gcm" = "#D98B65", "species" = "#6B95B2", "species:all" = "#8E85C4")
 unc_decomp <- simulations %>%
   dplyr::filter(year %in% c(1990:2100)) %>%
@@ -79,7 +79,7 @@ unc_decomp <- simulations %>%
 
 # Trends and uncertainty sources
 
-cols <- c("residuals + int. ann. var." = "#a25752", "sdm" = "#7fa688", "sdm:gcm + sdm:ssp" = "#ddb166",
+cols <- c("residuals + int. ann. var." = "#937668", "sdm" = "#7fa688", "sdm:gcm + sdm:ssp" = "#ddb166",
           "climate" = "#D98B65", "species" = "#6B95B2", "species:all" = "#8E85C4")
 
 trend_unc <- simulations %>%
