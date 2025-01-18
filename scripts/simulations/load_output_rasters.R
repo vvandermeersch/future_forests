@@ -3,17 +3,18 @@
 dir <- "C:/Users/vandermeersch/Documents/CEFE/projects/future_forests"
 data_dir <- "D:/projects/future_forests"
 
-gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "UKESM1-0-LL")
+gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "UKESM1-0-LL", "MRI-ESM2-0")
 scenarios <- c("ssp245", "ssp585")
 
-species <- "fagus_sylvatica"
+species <- "quercus_robur"
 
 years <- c(1970:2100)
 calibrations <- (paste0("subset",rep(7:10, each = 10),"_rep", 1:10))
+calibrations <- "expert"
 
 
 # save rasters of simulations
-plan(multisession, workers = 10)
+plan(multisession, workers = 1)
 simulations <- future_lapply(calibrations, function(c){
   # loop on GCMs
   output <- rast(lapply(gcms, function(m){
@@ -24,14 +25,14 @@ simulations <- future_lapply(calibrations, function(c){
         output <- read_mean_outputvalue(sim_dir, years = yr, 
                                         model = "PHENOFIT", output_var = "Fitness")
         output <- rast(output[,c(2,1,3)])
-        time(output) <- as.Date(paste0(yr, "-01-01"))
+        terra::time(output) <- as.Date(paste0(yr, "-01-01"))
         names(output) <- paste0(m, "_hist")
       }else if(yr <= 2010){
         sim_dir <- file.path(data_dir, "data", "simulations", species, m, "2001_2010", c)
         output <- read_mean_outputvalue(sim_dir, years = yr, 
                                         model = "PHENOFIT", output_var = "Fitness")
         output <- rast(output[,c(2,1,3)])
-        time(output) <- as.Date(paste0(yr, "-01-01"))
+        terra::time(output) <- as.Date(paste0(yr, "-01-01"))
         names(output) <- paste0(m, "_hist")
       }else if(yr <= 2019){
         # loop on scenarios
@@ -40,7 +41,7 @@ simulations <- future_lapply(calibrations, function(c){
           output <- read_mean_outputvalue(sim_dir, years = yr, 
                                           model = "PHENOFIT", output_var = "Fitness")
           output <- rast(output[,c(2,1,3)])
-          time(output) <- as.Date(paste0(yr, "-01-01"))
+          terra::time(output) <- as.Date(paste0(yr, "-01-01"))
           names(output) <- paste0(m, "_", s)
           return(output)
         }))
@@ -51,7 +52,7 @@ simulations <- future_lapply(calibrations, function(c){
           output <- read_mean_outputvalue(sim_dir, years = yr, 
                                           model = "PHENOFIT", output_var = "Fitness")
           output <- rast(output[,c(2,1,3)])
-          time(output) <- as.Date(paste0(yr, "-01-01"))
+          terra::time(output) <- as.Date(paste0(yr, "-01-01"))
           names(output) <- paste0(m, "_", s)
           return(output)
         }))
@@ -61,7 +62,7 @@ simulations <- future_lapply(calibrations, function(c){
     return(output)
   }))
   
-  terra::writeRaster(output, file.path(dir, "process", species, "suit", paste0(c, ".tif")),  overwrite=TRUE)
+  terra::writeRaster(output, file.path(dir, "data","processed", species, "suit", paste0(c, ".tif")),  overwrite=TRUE)
   
   # .output <- wrap(output)
   # return(.output)
