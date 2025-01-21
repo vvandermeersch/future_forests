@@ -5,8 +5,10 @@ ecoregions <- simplifyGeom(ecoregions, 7830.79, makeValid=TRUE)
 grid <- subset(sim_distribution,2) %>% project("EPSG:3035") 
 names(grid) <- "val"
 
+
+
 list_ecoreg <- c("Alpine","Anatolian","Arctic","Atlantic","BlackSea","Boreal",
-                 "Continental", "Mediterranean","Outside","Pannonian","Steppic")
+                 "Continental", "Mediterranean","Pannonian","Steppic")
 
 ecorast <- lapply(1:length(list_ecoreg), function(i){
   e <- list_ecoreg[i]
@@ -25,8 +27,7 @@ ecorast <- lapply(1:length(list_ecoreg), function(i){
 
 grid <- subset(sim_distribution,2)
 names(grid) <- "val"
-list_ecoreg <- c("Alpine","Anatolian","Arctic","Atlantic","BlackSea","Boreal",
-                 "Continental", "Mediterranean","Outside","Pannonian","Steppic")
+
 
 ecorast_wgs84 <- lapply(1:length(list_ecoreg), function(i){
   e <- list_ecoreg[i]

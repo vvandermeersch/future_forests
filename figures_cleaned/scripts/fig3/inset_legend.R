@@ -20,7 +20,8 @@ insetlegend <- ggplot(data =
                 int=replace(int, species == "quercus_petraea", 0.09),
                 int=replace(int, species == "quercus_robur", 0.09),
                 int=replace(int, species == "abies_alba", 0.06),
-                species = factor(species, labels = c("Silver fir", "Beech", 
+                species = factor(species, labels = c("Silver fir", 
+                                                     "Beech", 
                                                      "Evergreen oak ","Sessile oak", 
                                                      "Pubesc. oak", "Pedunc. oak")))
        

@@ -1,16 +1,16 @@
 
-data_barplot$species.pos <- sapply(data_barplot$species, function(s) which(species_list == s)/10 + (which(species_list == s))*0.03)
+data_barplot$species.pos <- sapply(data_barplot$species, function(s) which(species_list == s)/10 + (which(species_list == s))*0.0025)
 data_barplot$sdm.climate = data_barplot$gcm.sdm + data_barplot$ssp.sdm
 
 cols <- c("residuals" = "#937668", "sdm" = "#7fa688", "sdm.climate" = "#ddb166",
           "gcm" = "#D98B65", "gcm.ssp" = "#BD8985", "ssp" = "#a25752") 
 
-mid <- 0.39
-wid <- 0.13
+mid <- 0.47
+wid <- 0.08
 
 barplot_prop_uncertainty_withinspecies <- ggplot(data = data_barplot) +
   geom_rect(
-    data = data.frame(ymin = rep(-0.6,7), ymax = rep(0.85,7),
+    data = data.frame(ymin = rep(-0.85,7), ymax = rep(0.85,7),
                       xmin = seq(0.5, 6.5, 1), xmax = seq(1.5, 7.5, 1),
                       alpha = c("0","1","0","1","0","1","0")),
     aes(ymin = ymin, ymax = ymax, xmin = xmin, xmax = xmax, alpha = alpha),
@@ -78,7 +78,7 @@ barplot_prop_uncertainty_withinspecies <- ggplot(data = data_barplot) +
     axis.title = element_text(size = 8.5),
     axis.text.y = element_text(size = 7),
     axis.text.x = element_text(angle = 0, size = 7, vjust = 0)) +
-  scale_y_continuous(position = "left", expand = c(0,0), limits = c(-0.6,0.85),
+  scale_y_continuous(position = "left", expand = c(0,0), limits = c(-0.85,0.85),
                      breaks = round(seq(-0.5, 0.75, 0.25),2),
                      labels = c("-0.5", "-0.25", "0", "0.25", "0.5", "0.75")) +
   labs(y = "Average projected change in suitability") +
