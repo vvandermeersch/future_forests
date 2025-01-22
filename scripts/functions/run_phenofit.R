@@ -1,4 +1,14 @@
 
+# Here's an example of how to run PHENOFIT with this function:
+# cmip6_folder <- "D:/CMIP6-Adjust"
+# gcm <- "IPSL-CM6A-LR"
+# run_phenofit(species_file = file.path(wd, "data", "models", "phenofit", "expert", "fagus_sylvatica.species"),
+#              years = c(2020, 2100), 
+#              output_dir = file.path(wd, "data", "simulations", "ssp585", gcm, "fagus_sylvatica", "phenofit", "expert"), 
+#              clim_name = gcm, 
+#              data_dir = file.path(cmip6_folder, gcm, "ssp585", "phenofit_format"),
+#              mem = 80000, quiet_mode = TRUE)
+
 run_phenofit <- 
   function(species_file, years,
            output_dir, 
@@ -7,7 +17,7 @@ run_phenofit <-
            java8 = NULL, script_name = "ScriptVictor",
            mem = 10000, quiet_mode = TRUE){
     
-    command_file <- file.path(tempdir(), "command_file.txt")
+    command_file <- file.path(tempdir(), "command_file.txt") # I don't care about the commandfile so I just put it in the (per-session) temporary directory
     run_capsis <- paste0("capsis -p script phenofit4.myscripts.", script_name, " ", command_file)
     run <- ifelse(is.null(java8), paste(cd_capsis, paste0("setmem ", mem) , run_capsis, sep=' && '),
                   paste(java8, cd_capsis, paste0("setmem ", mem) , run_capsis, sep=' && '))
@@ -45,16 +55,5 @@ run_phenofit <-
     }
     
     writeLines(command_lines, command_file)
-    
-  }
-
-read_fitness <- 
-  function(output_dir){
-    
-    output <- fread(paste0(output_dir,"/", "Fitness", ".txt"), header=T, sep="\t", fill=T)
-    output_mean <- apply(output[c(-1,-2),-1], 2, mean)
-    output <- data.frame(lat = as.numeric(output[1,-1]), lon = as.numeric(output[2,-1]), value = output_mean)
-    
-    return(output)
     
   }
