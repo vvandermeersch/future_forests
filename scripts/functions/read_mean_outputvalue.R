@@ -1,3 +1,9 @@
+
+# Reading PHENOFIT output
+# output_var: name of the variable, e.g. "LeafUnfoldingDate", "Fitness" (default)
+# years: must be specified like this: c(1970:2000)
+# correct_date option: transform any date >= 365 or NA into 366
+
 read_mean_outputvalue <- function(sim_dir, years,
                                   model = "PHENOFIT", output_var = "Fitness",
                                   correct_date = FALSE){
@@ -15,7 +21,8 @@ read_mean_outputvalue <- function(sim_dir, years,
     
     output[, mean := rowMeans(.SD), .SDcols = as.character(years)] # average over years
     output <- data.frame(output[,c("Location latitude", "Location longitude", "mean")]) # people prefer data.frame!
-  }else if(model == "PHENOFIT" & output_var == "SenescenceCustom"){
+    
+  }else if(model == "PHENOFIT" & output_var == "SenescenceCustom"){ # Return senescence date, but with NA instead of 366
     
     output <- fread(paste0(sim_dir,"/", "LeafSenescenceDate", ".txt"), header=T, sep="\t", fill=T)
     output <- transpose(output) # transform to a more-friendly format
@@ -29,7 +36,8 @@ read_mean_outputvalue <- function(sim_dir, years,
     
     output[, mean := rowMeans(.SD, na.rm = TRUE), .SDcols = as.character(years)] # average over years
     output <- data.frame(output[,c("Location latitude", "Location longitude", "mean")]) # people prefer data.frame!
-  }else if(model == "PHENOFIT" & output_var == "MaturationCustom"){
+    
+  }else if(model == "PHENOFIT" & output_var == "MaturationCustom"){ # Return maturation date, but with NA instead of 366
     
     output <- fread(paste0(sim_dir,"/", "FruitMaturationDate", ".txt"), header=T, sep="\t", fill=T)
     output <- transpose(output) # transform to a more-friendly format
@@ -43,7 +51,8 @@ read_mean_outputvalue <- function(sim_dir, years,
     
     output[, mean := rowMeans(.SD, na.rm = TRUE), .SDcols = as.character(years)] # average over years
     output <- data.frame(output[,c("Location latitude", "Location longitude", "mean")]) # people prefer data.frame!
-  }else if(model == "PHENOFIT" & output_var == "EcodormancyCustom"){
+    
+  }else if(model == "PHENOFIT" & output_var == "EcodormancyCustom"){ # Compute the duration of the ecodormancy phase
     
     output <- fread(paste0(sim_dir,"/", "LeafDormancyBreakDate", ".txt"), header=T, sep="\t", fill=T)
     output <- transpose(output) # transform to a more-friendly format
@@ -66,7 +75,7 @@ read_mean_outputvalue <- function(sim_dir, years,
     
     substract <- data.table()
     cols <- as.character(years)
-    ecodormancy <- as.data.table(as.matrix(leafout[,..cols])-as.matrix(endodormancy[,..cols]))
+    ecodormancy <- as.data.table(as.matrix(leafout[,..cols])-as.matrix(endodormancy[,..cols])) # difference between leafout date and endormancy break date
     
     ecodormancy$`Location latitude` <- leafout$`Location latitude`
     ecodormancy$`Location longitude` <- leafout$`Location longitude`
