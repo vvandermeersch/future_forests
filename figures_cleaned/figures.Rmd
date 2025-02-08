@@ -8,7 +8,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-wd <- "C:/Users/vandermeersch/Documents/CEFE/projects/future_forests"
+wd <- "~/projects/future_forests"
 
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE,
                       fig.path= paste0(wd, "/figures_cleaned/files/"))
@@ -29,6 +29,9 @@ library(ggpattern)
 library(RColorBrewer)
 library(khroma)
 library(grid)
+library(car)
+library(ggeffects)
+
 ```
 
 <!---  ## Fagus sylvatica divergent simulations --->
@@ -459,7 +462,7 @@ knitr::kable(saved_data_all %>%
 
 <!---  ## ANOVA-based partitioning within each species --->
 
-```{r anova_within_species_byecoregion, fig.height = 100, fig.width = 80, fig.cap = "ANOVA-based partitioning within species", dev = "cairo_pdf", eval = TRUE}
+```{r anova_within_species_byecoregion, fig.height = 100, fig.width = 90, fig.cap = "ANOVA-based partitioning within species", dev = "cairo_pdf", eval = TRUE}
 
 # switch
 reload_data <- FALSE
@@ -512,10 +515,12 @@ for(ecoregion in ecoregions){
   
 }
 
-data_barplot <- data_barplot %>%
-    left_join(saved_data_species %>% filter(year == 2090), by = c("ecoregion", "species")) %>%
-    mutate(ecoregion = factor(ecoregion, levels = rev(c("Boreal", "Alpine", "Continental", "Atlantic", "Mediterranean"))))
+species_order <- c("pinus_sylvestris", "abies_alba", "betula_pendula", "fraxinus_excelsior", "fagus_sylvatica", "quercus_petraea", "quercus_robur", "quercus_pubescens", "quercus_ilex") 
 
+data_barplot <- data_barplot %>%
+    left_join(saved_data_species %>% filter(year == 2090), by = c("year", "ecoregion", "species")) %>%
+    mutate(ecoregion = factor(ecoregion, levels = rev(c("Boreal", "Alpine", "Continental", "Atlantic", "Mediterranean"))))
+  
 
 source(file.path(wd, "figures_cleaned", "scripts", "fig3", "barplot_uncertainty_withinspecies.R"))
 # source(file.path(wd, "figures_cleaned", "scripts", "fig3", "inset_legend.R"))

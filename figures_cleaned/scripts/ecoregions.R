@@ -1,5 +1,5 @@
 
-ecoregions <- vect("D:/grid/EEA_bioregions/BiogeoRegions2016.shp") %>% project("EPSG:3035")
+ecoregions <- vect( file.path(wd, "figures_cleaned/data", "eea_bioregions", "BiogeoRegions2016.shp")) %>% project("EPSG:3035")
 ecoregions <- simplifyGeom(ecoregions, 7830.79, makeValid=TRUE)
 
 grid <- subset(sim_distribution,2) %>% project("EPSG:3035") 
