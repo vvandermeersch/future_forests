@@ -71,6 +71,7 @@
 %%%%%%%%%%%%% section / subsection titles %%%%%%%%%%%%%%%%
 
 \usepackage{titlesec} % change the "sffamily" to "rmfamily" if you switch to serif fonts
+
 \titleformat{\section}
   {\sffamily\normalsize\bfseries\color{black}}
   {\thesection}{1em}
@@ -98,11 +99,12 @@
 \begin{flushleft}
     \begin{adjustwidth}{0in}{.5in} % a bit more margin for the title
         \begin{Huge} 
-            \begin{spacing}{.9} 
-            \textbf{\sffamily\@title}
+            \begin{spacing}{.5} 
+            \textbf{\Large\sffamily\@title}
             \end{spacing}
         \end{Huge}
     \end{adjustwidth}
+    \bigskip
     \bigskip
     \linespread{1}
     \@author 
