@@ -1,0 +1,100 @@
+\documentclass[11pt,letter]{article}
+\usepackage[top=0.70in, bottom=0.8in, left=1.1in, right=1.1in]{geometry}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{xcolor} 
+\definecolor{Accent}{HTML}{bd2b00} 
+\usepackage[numbers,compress,super]{natbib}
+\usepackage{gensymb}
+\usepackage{hyperref}
+\hypersetup{colorlinks,citecolor = Accent, linkcolor = Accent,urlcolor = Accent, breaklinks=true}
+\usepackage{cleveref}
+\usepackage[labelfont=bf]{caption}
+\bibliographystyle{unsrtnat}
+
+\RequirePackage[labelfont={bf,sf},%
+                font={small, sf}]{caption}
+
+\usepackage{lineno}
+\renewcommand\linenumberfont{\normalfont\tiny\color{gray}}
+
+\begin{document}
+
+\title{Overlooked model uncertainties may misinform forest management strategies}
+
+\author{Victor, Jérôme, Isabelle, and more?}
+\date{}
+\maketitle 
+
+
+\noindent\rule{\textwidth}{0.3pt}
+\textbf{Abstract:} Forests play a major role in mitigating climate change, but increasing threats to forests from climate change have heightened the importance of managing these systems. Robust forecasts of forest composition with increasing climate change are critical to this aim, but are currently highly variable. To help guide management in the face of this variability and understand where we can most rapidly reduce uncertainty through improved models, we compare over XX ecological models and climate scenarios in forecasts for forests across Europe. Our approach considers a gradient of more mechanistic (`process-based') to correlative models of species distributions to find that uncertainty in ecological models can drive more variation than vastly different climate scenarios (e.g., SSP2 vs. SSP5), but also areas with relatively consistent projections [give overview of these and say that this could reduce uncertainty in how to manage for these areas]. [Maybe something on using existing range data leads to more pessimistic forecasts?] Our results highlight a new way to approach ecological forecasting that better identifies areas of higher certainty and, conversely, the areas where managers will need more diversified approaches and where more ecological study may be most useful. % pick: significant local variation OR diverse trade-offs
+
+\noindent\rule{\textwidth}{0.3pt}
+
+\vspace{0.3cm}
+
+\linenumbers
+
+\subsection*{Introduction}
+%
+%Intro:
+%1. Basically first two paragraphs you have combined (we need forests to
+%store C, and they are doing poorly) ending on the need for better
+%guidance of forest management
+%2. This is hard because we have a lot of biological models and they give
+%different answers, and for management we need to layer on the future
+%climate models ...
+%- Go into briefly the correlative versus process models -- they
+%differ  but we're not sure which is best
+%- Given we don't have one great approach to build to (and we have
+%run out of time), so maybe we move on and accept the diversity
+%- Transition to something explaining the layers of models we need
+%to consider to capture climate to biology
+%3. Back to what we need to do with the models for forest management
+%- Here you might touch on what we could do with this, get in some
+%of the stuff I highlighted in the discussion that you need to foreshadow
+%for readers.
+
+
+%From J Chave:
+%Climate change has direct impact on a myriad of ecosystem processes, and forests are especially vulnerable. European temperatures are rising twice as fast as the global average (Copernicus Climate Change Service, 2024), and unprecedented pulses of tree mortality have benn reported in the last decade, across the range of forest species (Senf et al, 2020). As a consequence, some European forests are now net CO2 sources (Hadden and Grelle, 2016; Karelin et al, 2021), due to decreased growth (Hadden and Grelle, 2016; van der Woude et al, 2023), increased burned areas (Carnicer et al, 2022; Kelly et al, 2024), and increased pest or drought-related dieback driven (Cienciala and Melichar, 2024; Karelin et al, 2021; Latifovic and Arain, 2024).  Implementation strategies are rolled out in spite of the uncertainty of the scenarios.
+
+%1. Basically first two paragraphs you have combined (we need forests to
+%store C, and they are doing poorly) ending on the need for better
+%guidance of forest management
+% the baby: with climate change, we need to safeguard and adapt forests, as they play a major role in mitigating its effects
+Forests are key to pursuing climate mitigation policies and achieving carbon neutrality  \citep{Korosuo2023, Hyyrynen2023}. Yet, they are increasingly under pressure. In Europe, temperatures are rising twice as fast as the global average \citep{CCCS2024}, and unprecedented pulses of tree mortality  have been reported in the last decade \citep{Senf2020}. As a result, some European forests are becoming net CO$_2$ sources \citep{Hadden2016, Karelin2021}, due to decreased growth \citep{Hadden2016, Woude2023}, larger burned areas \citep{Carnicer2022, Kelly2024}, and increased pest- and drought-induced dieback \citep{Karelin2021, Cienciala2024, Latifovic2024}. Forest managers are facing unprecedented challenges, as they must address current threats while also promoting long-term adaptation to climate change. In this context of high uncertainty, better guidance is needed to implement successful strategies.
+% => the need for better guidance of forest management
+
+
+%2. This is hard because we have a lot of biological models and they give
+%different answers, and for management we need to layer on the future
+%climate models ...
+%- Go into briefly the correlative versus process models -- they
+%differ  but we're not sure which is best
+%- Given we don't have one great approach to build to (and we have
+%run out of time), so maybe we move on and accept the diversity
+%- Transition to something explaining the layers of models we need
+% the werewolf: We have many models, we don't know which one is the best. Most decisions rely on limited models without much insight into what drives differences in projections. This can mask significant uncertainties and ultimately threaten the success of forest management decisions
+Given the diversity of predictive ecological models, the challenge of providing practical insights for forest management is even greater. Different models, ranging from correlative to more mechanistic approaches, may provide highly divergent projections. While it remains unclear under which conditions one approach is more reliable than another, most forecasting studies still rely on a limited set of models. We thus often lack a comprehensive understanding of what drives differences between projections. Given the urgency of climate change, we must incorporate this diversity and merge across ecological and climatological models to provide a complete picture of both the threats and opportunities for forests. Failing to do so could ultimately compromise the success of forest management decisions.
+
+
+%Predictive ecological models are essential to examine the ecological drivers across scales \citep{Levins1993, Mitchell2006}. 
+%Most studies project pronounced species range shifts and forest composition changes in Europe \citep{Hickler2012, Hanewinkel2013, Saltre2015, Schueler2014, Dyderski2018, Takolander2019, Wessely2024, Ohlemueller2006}, with major potential impacts on timber production and forest economic sector \citep{Hanewinkel2013, Wessely2024}. However, uncertainties associated with species range projections are often underappreciated \citep{Simmonds2024}. Current approaches ignored a large part of the model diversity when by considering only correlative model projections \citep{BarbetMassin2010,Duputie2014,Faurby2018, DinizFilho2009, Thuiller2019}, which may ultimately threaten the success of forest management decisions based on these projections. 
+
+%3. Back to what we need to do with the models for forest management
+%- Here you might touch on what we could do with this, get in some
+%of the stuff I highlighted in the discussion that you need to foreshadow
+%for readers.
+% the silver bullet: accept a greater diversity of models (scientific approaches, hypothesis), and figure out how to safeguard forests by gaining a better understanding of uncertainties, i.e., merging across biological and climatological components (uncertainty budget framework)
+Gaining a better understanding of where uncertainties originate and how they relate is crucial to identify opportunities for model developments \citep{Petchey2015} and to address policy-relevant questions \citep{Urban2016}. Forest managers need to know whether the current species will be able to tolerate future climate conditions, whether they can rely on its natural regeneration, or whether they should capitalize on new species opportunities.
+% what should be in the intro:
+% projections huge differences: could be more critical to encompass the full model diversity rater than the full species diversity to get a comprehensive assesment of the magnitude of climatic change
+%  "ignoring a large portion of uncertainty in psecies range projections due to odelling approaches can thus lead to overly confident predictions about which species will or will not be able to future climates, leading to counterproductive or even detrimental/prejudicial decisions.
+% 
+
+\clearpage
+
+\bibliography{phd_bibliography}
+
+\end{document}
