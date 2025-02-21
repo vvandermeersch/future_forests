@@ -1,0 +1,180 @@
+\begin{thebibliography}{22}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Korosuo et~al.(2023)Korosuo, Pilli, Abad~Viñas, Blujdea, Colditz, Fiorese, Rossi, Vizzarri, and Grassi]{Korosuo2023}
+Anu Korosuo, Roberto Pilli, Raúl Abad~Viñas, Viorel N.~B. Blujdea, Rene~R. Colditz, Giulia Fiorese, Simone Rossi, Matteo Vizzarri, and Giacomo Grassi.
+\newblock The role of forests in the {EU} climate policy: are we on the right track?
+\newblock \emph{Carbon Balance and Management}, 18\penalty0 (1):\penalty0 15, July 2023.
+\newblock ISSN 1750-0680.
+\newblock \doi{10.1186/s13021-023-00234-0}.
+\newblock URL \url{https://doi.org/10.1186/s13021-023-00234-0}.
+
+\bibitem[Hyyrynen et~al.(2023)Hyyrynen, Ollikainen, and Seppälä]{Hyyrynen2023}
+Matti Hyyrynen, Markku Ollikainen, and Jyri Seppälä.
+\newblock European forest sinks and climate targets: past trends, main drivers, and future forecasts.
+\newblock \emph{European Journal of Forest Research}, 142\penalty0 (5):\penalty0 1207--1224, October 2023.
+\newblock ISSN 1612-4677.
+\newblock \doi{10.1007/s10342-023-01587-4}.
+\newblock URL \url{https://doi.org/10.1007/s10342-023-01587-4}.
+
+\bibitem[{Copernicus Climate Change Service}(2024)]{CCCS2024}
+{Copernicus Climate Change Service}.
+\newblock European state of the climate 2023.
+\newblock Technical report, 2024.
+\newblock URL \url{https://climate.copernicus.eu/esotc/2023}.
+
+\bibitem[Senf et~al.(2020)Senf, Buras, Zang, Rammig, and Seidl]{Senf2020}
+Cornelius Senf, Allan Buras, Christian~S. Zang, Anja Rammig, and Rupert Seidl.
+\newblock Excess forest mortality is consistently linked to drought across {Europe}.
+\newblock \emph{Nature Communications}, 11\penalty0 (1):\penalty0 6200, December 2020.
+\newblock ISSN 2041-1723.
+\newblock \doi{10.1038/s41467-020-19924-1}.
+\newblock URL \url{https://www.nature.com/articles/s41467-020-19924-1}.
+
+\bibitem[Hadden and Grelle(2016)]{Hadden2016}
+David Hadden and Achim Grelle.
+\newblock Changing temperature response of respiration turns boreal forest from carbon sink into carbon source.
+\newblock \emph{Agricultural and Forest Meteorology}, 223:\penalty0 30--38, June 2016.
+\newblock ISSN 0168-1923.
+\newblock \doi{10.1016/j.agrformet.2016.03.020}.
+\newblock URL \url{https://www.sciencedirect.com/science/article/pii/S0168192316302131}.
+
+\bibitem[Karelin et~al.(2021)Karelin, Zamolodchikov, Shilkin, Popov, Kumanyaev, de~Gerenyu, Tel’nova, and Gitarskiy]{Karelin2021}
+D.~V. Karelin, D.~G. Zamolodchikov, A.~V. Shilkin, S.~Yu. Popov, A.~S. Kumanyaev, V.~O.~Lopes de~Gerenyu, N.~O. Tel’nova, and Michael~L. Gitarskiy.
+\newblock The effect of tree mortality on {CO2} fluxes in an old-growth spruce forest.
+\newblock \emph{European Journal of Forest Research}, 140\penalty0 (2):\penalty0 287--305, April 2021.
+\newblock ISSN 1612-4677.
+\newblock \doi{10.1007/s10342-020-01330-3}.
+\newblock URL \url{https://doi.org/10.1007/s10342-020-01330-3}.
+
+\bibitem[van~der Woude et~al.(2023)van~der Woude, Peters, Joetzjer, Lafont, Koren, Ciais, Ramonet, Xu, Bastos, Botía, Sitch, de~Kok, Kneuer, Kubistin, Jacotot, Loubet, Herig-Coimbra, Loustau, and Luijkx]{Woude2023}
+Auke~M. van~der Woude, Wouter Peters, Emilie Joetzjer, Sébastien Lafont, Gerbrand Koren, Philippe Ciais, Michel Ramonet, Yidi Xu, Ana Bastos, Santiago Botía, Stephen Sitch, Remco de~Kok, Tobias Kneuer, Dagmar Kubistin, Adrien Jacotot, Benjamin Loubet, Pedro-Henrique Herig-Coimbra, Denis Loustau, and Ingrid~T. Luijkx.
+\newblock Temperature extremes of 2022 reduced carbon uptake by forests in {Europe}.
+\newblock \emph{Nature Communications}, 14\penalty0 (1):\penalty0 6218, October 2023.
+\newblock ISSN 2041-1723.
+\newblock \doi{10.1038/s41467-023-41851-0}.
+\newblock URL \url{https://www.nature.com/articles/s41467-023-41851-0}.
+
+\bibitem[Carnicer et~al.(2022)Carnicer, Alegria, Giannakopoulos, Di~Giuseppe, Karali, Koutsias, Lionello, Parrington, and Vitolo]{Carnicer2022}
+Jofre Carnicer, Andrés Alegria, Christos Giannakopoulos, Francesca Di~Giuseppe, Anna Karali, Nikos Koutsias, Piero Lionello, Mark Parrington, and Claudia Vitolo.
+\newblock Global warming is shifting the relationships between fire weather and realized fire-induced {CO2} emissions in {Europe}.
+\newblock \emph{Scientific Reports}, 12\penalty0 (1):\penalty0 10365, June 2022.
+\newblock ISSN 2045-2322.
+\newblock \doi{10.1038/s41598-022-14480-8}.
+\newblock URL \url{https://www.nature.com/articles/s41598-022-14480-8}.
+
+\bibitem[Kelly et~al.(2024)Kelly, Kljun, Cai, Doerr, D'Onofrio, Holst, Lehner, Lindroth, Thapa, Vestin, and Santín]{Kelly2024}
+Julia Kelly, Natascha Kljun, Zhanzhang Cai, Stefan~H. Doerr, Claudio D'Onofrio, Thomas Holst, Irene Lehner, Anders Lindroth, Shangharsha Thapa, Patrik Vestin, and Cristina Santín.
+\newblock Wildfire impacts on the carbon budget of a managed {Nordic} boreal forest.
+\newblock \emph{Agricultural and Forest Meteorology}, 351:\penalty0 110016, May 2024.
+\newblock ISSN 0168-1923.
+\newblock \doi{10.1016/j.agrformet.2024.110016}.
+\newblock URL \url{https://www.sciencedirect.com/science/article/pii/S016819232400131X}.
+
+\bibitem[Cienciala and Melichar(2024)]{Cienciala2024}
+Emil Cienciala and Jan Melichar.
+\newblock Forest carbon stock development following extreme drought-induced dieback of coniferous stands in {Central} {Europe}: a {CBM}-{CFS3} model application.
+\newblock \emph{Carbon Balance and Management}, 19\penalty0 (1):\penalty0 1, January 2024.
+\newblock ISSN 1750-0680.
+\newblock \doi{10.1186/s13021-023-00246-w}.
+\newblock URL \url{https://doi.org/10.1186/s13021-023-00246-w}.
+
+\bibitem[Latifovic and Arain(2024)]{Latifovic2024}
+Lejla Latifovic and M.~Altaf Arain.
+\newblock The impact of spongy moth (\textit{{Lymantria} dispar dispar}) defoliation on carbon balance of a temperate deciduous forest in {North} {America}.
+\newblock \emph{Agricultural and Forest Meteorology}, 354:\penalty0 110076, July 2024.
+\newblock ISSN 0168-1923.
+\newblock \doi{10.1016/j.agrformet.2024.110076}.
+\newblock URL \url{https://www.sciencedirect.com/science/article/pii/S0168192324001916}.
+
+\bibitem[Morin and Thuiller(2009)]{Morin2009}
+Xavier Morin and Wilfried Thuiller.
+\newblock Comparing niche- and process-based models to reduce prediction uncertainty in species range shifts under climate change.
+\newblock \emph{Ecology}, 90\penalty0 (5):\penalty0 1301--1313, 2009.
+\newblock ISSN 1939-9170.
+\newblock \doi{10.1890/08-0134.1}.
+\newblock URL \url{https://onlinelibrary.wiley.com/doi/abs/10.1890/08-0134.1}.
+
+\bibitem[Keenan et~al.(2011)Keenan, Maria~Serra, Lloret, Ninyerola, and Sabate]{Keenan2011a}
+Trevor Keenan, Josep Maria~Serra, Francisco Lloret, Miquel Ninyerola, and Santiago Sabate.
+\newblock Predicting the future of forests in the {Mediterranean} under climate change, with niche- and process-based models: {CO2} matters!
+\newblock \emph{Global Change Biology}, 17\penalty0 (1):\penalty0 565--579, 2011.
+\newblock ISSN 1365-2486.
+\newblock \doi{10.1111/j.1365-2486.2010.02254.x}.
+\newblock URL \url{https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1365-2486.2010.02254.x}.
+
+\bibitem[Cheaib et~al.(2012)Cheaib, Badeau, Boe, Chuine, Delire, Dufrêne, François, Gritti, Legay, Pagé, Thuiller, Viovy, and Leadley]{Cheaib2012}
+Alissar Cheaib, Vincent Badeau, Julien Boe, Isabelle Chuine, Christine Delire, Eric Dufrêne, Christophe François, Emmanuel~S. Gritti, Myriam Legay, Christian Pagé, Wilfried Thuiller, Nicolas Viovy, and Paul Leadley.
+\newblock Climate change impacts on tree ranges: model intercomparison facilitates understanding and quantification of uncertainty.
+\newblock \emph{Ecology Letters}, 15\penalty0 (6):\penalty0 533--544, 2012.
+\newblock ISSN 1461-0248.
+\newblock \doi{10.1111/j.1461-0248.2012.01764.x}.
+\newblock URL \url{https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1461-0248.2012.01764.x}.
+
+\bibitem[Takolander et~al.(2019)Takolander, Hickler, Meller, and Cabeza]{Takolander2019}
+Antti Takolander, Thomas Hickler, Laura Meller, and Mar Cabeza.
+\newblock Comparing future shifts in tree species distributions across {Europe} projected by statistical and dynamic process-based models.
+\newblock \emph{Regional Environmental Change}, 19\penalty0 (1):\penalty0 251--266, January 2019.
+\newblock ISSN 1436-378X.
+\newblock \doi{10.1007/s10113-018-1403-x}.
+\newblock URL \url{https://doi.org/10.1007/s10113-018-1403-x}.
+
+\bibitem[Van~der Meersch et~al.(2024)Van~der Meersch, Armstrong, Mouillot, Duputi{\'e}, Davi, Saltr{\'e}, and Chuine]{VanderMeersch2024}
+Victor Van~der Meersch, Edward Armstrong, Florent Mouillot, Anne Duputi{\'e}, Hendrik Davi, Fr{\'e}d{\'e}rik Saltr{\'e}, and Isabelle Chuine.
+\newblock Biological mechanisms are necessary to improve projections of species range shifts.
+\newblock \emph{bioRxiv}, 2024.
+\newblock \doi{10.1101/2024.05.06.592679}.
+\newblock URL \url{https://www.biorxiv.org/content/early/2024/05/08/2024.05.06.592679}.
+
+\bibitem[Dyderski et~al.(2018)Dyderski, Paz, Frelich, and Jagodzinski]{Dyderski2018}
+Marcin~K. Dyderski, Sonia Paz, Lee~E. Frelich, and Andrzej~M. Jagodzinski.
+\newblock How much does climate change threaten {European} forest tree species distributions?
+\newblock \emph{Global Change Biology}, 24\penalty0 (3):\penalty0 1150--1163, 2018.
+\newblock ISSN 1365-2486.
+\newblock \doi{10.1111/gcb.13925}.
+\newblock URL \url{https://onlinelibrary.wiley.com/doi/abs/10.1111/gcb.13925}.
+
+\bibitem[Wessely et~al.(2024)Wessely, Essl, Fiedler, Gattringer, Hülber, Ignateva, Moser, Rammer, Dullinger, and Seidl]{Wessely2024}
+Johannes Wessely, Franz Essl, Konrad Fiedler, Andreas Gattringer, Bernhard Hülber, Olesia Ignateva, Dietmar Moser, Werner Rammer, Stefan Dullinger, and Rupert Seidl.
+\newblock A climate-induced tree species bottleneck for forest management in {Europe}.
+\newblock \emph{Nature Ecology \& Evolution}, 8\penalty0 (6):\penalty0 1109--1117, June 2024.
+\newblock ISSN 2397-334X.
+\newblock \doi{10.1038/s41559-024-02406-8}.
+\newblock URL \url{https://www-nature-com.inee.bib.cnrs.fr/articles/s41559-024-02406-8}.
+
+\bibitem[Hanewinkel et~al.(2013)Hanewinkel, Cullmann, Schelhaas, Nabuurs, and Zimmermann]{Hanewinkel2013}
+Marc Hanewinkel, Dominik~A. Cullmann, Mart-Jan Schelhaas, Gert-Jan Nabuurs, and Niklaus~E. Zimmermann.
+\newblock Climate change may cause severe loss in the economic value of {European} forest land.
+\newblock \emph{Nature Climate Change}, 3\penalty0 (3):\penalty0 203--207, March 2013.
+\newblock ISSN 1758-6798.
+\newblock \doi{10.1038/nclimate1687}.
+\newblock URL \url{https://www.nature.com/articles/nclimate1687}.
+
+\bibitem[Schueler et~al.(2014)Schueler, Falk, Koskela, Lefèvre, Bozzano, Hubert, Kraigher, Longauer, and Olrik]{Schueler2014}
+Silvio Schueler, Wolfgang Falk, Jarkko Koskela, François Lefèvre, Michele Bozzano, Jason Hubert, Hojka Kraigher, Roman Longauer, and Ditte~C. Olrik.
+\newblock Vulnerability of dynamic genetic conservation units of forest trees in {Europe} to climate change.
+\newblock \emph{Global Change Biology}, 20\penalty0 (5):\penalty0 1498--1511, 2014.
+\newblock ISSN 1365-2486.
+\newblock \doi{10.1111/gcb.12476}.
+\newblock URL \url{https://onlinelibrary.wiley.com/doi/abs/10.1111/gcb.12476}.
+
+\bibitem[Simmonds et~al.(2024)Simmonds, Adjei, Cretois, Dickel, González-Gil, Laverick, Mandeville, Mandeville, Ovaskainen, Sicacha-Parada, Skarstein, and O'Hara]{Simmonds2024}
+Emily~G. Simmonds, Kwaku~P. Adjei, Benjamin Cretois, Lisa Dickel, Ricardo González-Gil, Jack~H. Laverick, Caitlin~P. Mandeville, Elizabeth~G. Mandeville, Otso Ovaskainen, Jorge Sicacha-Parada, Emma~S. Skarstein, and Bob O'Hara.
+\newblock Recommendations for quantitative uncertainty consideration in ecology and evolution.
+\newblock \emph{Trends in Ecology \& Evolution}, 39\penalty0 (4):\penalty0 328--337, April 2024.
+\newblock ISSN 0169-5347.
+\newblock \doi{10.1016/j.tree.2023.10.012}.
+\newblock URL \url{https://www.sciencedirect.com/science/article/pii/S0169534723002793}.
+
+\bibitem[Urban et~al.(2016)Urban, Bocedi, Hendry, Mihoub, Pe’er, Singer, Bridle, Crozier, De~Meester, Godsoe, Gonzalez, Hellmann, Holt, Huth, Johst, Krug, Leadley, Palmer, Pantel, Schmitz, Zollner, and Travis]{Urban2016}
+M.~C. Urban, G.~Bocedi, A.~P. Hendry, J.-B. Mihoub, G.~Pe’er, A.~Singer, J.~R. Bridle, L.~G. Crozier, L.~De~Meester, W.~Godsoe, A.~Gonzalez, J.~J. Hellmann, R.~D. Holt, A.~Huth, K.~Johst, C.~B. Krug, P.~W. Leadley, S.~C.~F. Palmer, J.~H. Pantel, A.~Schmitz, P.~A. Zollner, and J.~M.~J. Travis.
+\newblock Improving the forecast for biodiversity under climate change.
+\newblock \emph{Science}, 353\penalty0 (6304):\penalty0 aad8466, September 2016.
+\newblock \doi{10.1126/science.aad8466}.
+\newblock URL \url{https://www.science.org/doi/10.1126/science.aad8466}.
+
+\end{thebibliography}
