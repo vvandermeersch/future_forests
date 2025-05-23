@@ -9,4 +9,17 @@
 **/data/
 **/archive/
 
+**/newfigures/archive/
+
 *.gz
+
+*.log
+*.aux
+*.blg
+*.bbl
+*.synctex.gz
+*.out 
+*.lua
+*.yml
+*.fls
+*.fdb_latexmk
