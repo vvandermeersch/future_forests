@@ -1,0 +1,70 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[top=1.00in, bottom=1.0in, left=1.1in, right=1.1in]{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[style=authoryear, backend=biber, natbib = true, style=numeric-comp, sortcites, hyperref, sorting=none, giveninits=true, doi=false,isbn=false,url=false,eprint=false, date=year, maxbibnames = 2, backend=bibtex]{biblatex}
+\AtEveryBibitem{\clearfield{pages}}
+\AtEveryBibitem{\clearlist{language}}
+\AtEveryBibitem{%
+  \clearfield{volume}%
+  \clearfield{number}}
+\AtEveryBibitem{\clearfield{title}}
+\renewbibmacro{in:}{}
+\usepackage[export]{adjustbox}
+
+
+\addbibresource{phd_bibliography.bib} 
+
+\begin{document}
+
+\pagenumbering{gobble}
+
+\noindent \includegraphics[width=0.5\textwidth, right]{/home/victor/Documents/Papiers officiels/Signatures/forestry_letterhead.png}
+
+\vspace{0.75cm}
+
+\noindent Dear X, %emw19Jan -- add name. Also before I forget, I go by EM Wolkovich in publications. 
+
+\vspace{0.25cm} %emw19Jan -- cover letter in very nice shape! I just made major edits to one paragraph; take or leave them. 
+
+\noindent Please consider our paper, entitled ``Overlooked model uncertainties may misinform forest management strategies'', for publication in \emph{X}. This manuscript provide a critical cross-biome assessment of forest responses to climate change---with potential huge benefits for forest management in Europe and beyond.
+
+\vspace{0.3cm}
+
+\noindent Forecasts for forests under climate change predict widespread adverse effects, including major species shifts. Robust forecasts of forest composition are critical to maintain forest socio-economic services. Yet, current studies often rely on a narrow set of models and ignore a large part of the uncertainties\supercite{Wessely2024, Hanewinkel2013}, limiting their practical insights for forest management. Misinformed decision-making---because of incomplete forecasts---could have long-term adversarial consequences on ecosystems\supercite{Dawson2011, Urban2016}, driving forest declines and reduced carbon storage.
+
+\vspace{0.3cm}
+%emw19Jan -- Add Wang citation as suggested below, it hints at how important this work is across plant disciplines.
+\noindent Here, we considered over 1,350 projections of tree species range shifts, with diverse ecological and climatological models, and across different emissions scenarios. By fully encompassing the different sources of uncertainty, we were able to quantify each source contribution to the forecast uncertainty, across species and across biomes.
+\vspace{0.3cm}
+
+\noindent Our results show that ecological models represent the largest source of uncertainty (up to two thirds), even under vastly different emission scenarios. While previous studies have strongly underestimated the overall forecast uncertainty, our workflow provides a comprehensive view of potential futures for forests. Uncertainties vary between biomes and species, highlighting pathways to improve forest management. We identify regions where management could take immediate action with low risk of failure, and regions where models strongly disagree for which uncertainty management and diversification of options would be necessary.
+
+\vspace{0.3cm}
+
+\noindent Our findings contribute to a more complete assessment of both the threats and opportunities facing forests in Europe, and highlight regions where policies have to be carefully tailored to effectively address all uncertainties. We advocate for a more systematic incorporation of uncertainties into decision-making\supercite{Dawson2011, Urban2016, Saltelli2020}, and suggest that managers need to internalize ecological uncertainty through diversified and more risk-adverse strategies.
+
+\vspace{0.3cm}
+
+\noindent All authors contributed to this work and approve this version for submission. The manuscript is X words, with X references and X figures, and is not under consideration elsewhere. We hope you find it suitable for publication in \emph{X}, and look forward to hearing from you. 
+
+\vspace{0.5cm}
+\noindent Sincerely, \\
+\hspace*{-0.5cm}
+\includegraphics[scale=.5]{/home/victor/Documents/Papiers officiels/Signatures/signature_longue.png} \\
+\vspace{-2cm}\\
+\noindent Victor Van der Meersch, PhD\\
+\noindent \emph{Forest \& Conservation Sciences}\\
+\noindent \emph{University of British Columbia}
+
+\clearpage
+
+\paragraph{References}
+\printbibliography[heading=none]
+
+
+\newpage
+
+\end{document}
+
+
