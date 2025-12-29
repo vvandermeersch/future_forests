@@ -38,10 +38,10 @@ csdm_fitness <- rowMeans(csdm_fitness)
 
 fit_df <- cbind(tmean, mech_fitness, csdm_fitness)
 
-fit_df$tmean_approx <- round(fit_df$tmean, 0)
+fit_df$tmean_approx <- ceiling(fit_df$tmean / 0.5) * 0.5
 
-mech_fitness_agg <- aggregate(mech_fitness ~ tmean_approx, data = fit_df, FUN = mean)
-csdm_fitness_agg <- aggregate(csdm_fitness ~ tmean_approx, data = fit_df, FUN = mean)
+mech_fitness_agg <- aggregate(mech_fitness ~ tmean_approx, data = fit_df, FUN = quantile, probs = c(0.05, 0.5, 0.95))
+csdm_fitness_agg <- aggregate(csdm_fitness ~ tmean_approx, data = fit_df, FUN = quantile, probs = c(0.05, 0.5, 0.95))
 fitness_agg <- merge(mech_fitness_agg, csdm_fitness_agg)
 
 # ggplot() +
@@ -50,10 +50,19 @@ fitness_agg <- merge(mech_fitness_agg, csdm_fitness_agg)
 #   theme_classic()
 
 ggplot(data = fitness_agg) +
-  geom_line(aes(x = tmean_approx, y = mech_fitness)) +
-  geom_line(aes(x = tmean_approx, y = csdm_fitness), linetype = 'dashed') +
-  geom_point(x = mean(tmean_2020.2040), y = mean(mech_fitness_2020.2040$mech_fitness), size = 4)
-
+  geom_ribbon(aes(x = tmean_approx, ymin = mech_fitness[,'5%'], ymax = mech_fitness[,'95%']),
+              alpha = 0.1) +
+  geom_line(aes(x = tmean_approx, y = mech_fitness[,'5%']), linetype = 'dashed') +
+  geom_line(aes(x = tmean_approx, y = mech_fitness[,'50%']), linetype = 'solid') +
+  geom_line(aes(x = tmean_approx, y = mech_fitness[,'95%']), linetype = 'dashed') +
+  geom_ribbon(aes(x = tmean_approx, ymin = -csdm_fitness[,'5%'], ymax = -csdm_fitness[,'95%']),
+              alpha = 0.1) +
+  geom_line(aes(x = tmean_approx, y = -csdm_fitness[,'5%']), linetype = 'dashed') +
+  geom_line(aes(x = tmean_approx, y = -csdm_fitness[,'50%']), linetype = 'solid') +
+  geom_line(aes(x = tmean_approx, y = -csdm_fitness[,'95%']), linetype = 'dashed') +
+  geom_point(x = mean(tmean_2020.2040), y = mean(mech_fitness_2020.2040$mech_fitness), size = 1) +
+  geom_point(x = mean(tmean_2080.2100), y = mean(mech_fitness_2080.2100$mech_fitness), size = 1) +
+  theme_classic()
 
 idxs <- which(grepl(ssp,names(mech)) & time(mech, format ="years") %in% 2020:2040)
 r <- mean(subset(mech,idxs))
@@ -70,3 +79,20 @@ for(y in 2020:2040){
   tmean_2020.2040 <- cbind(tmean_2020.2040, tmean_y)
 }
 tmean_2020.2040 <- rowMeans(tmean_2020.2040)
+
+
+idxs <- which(grepl(ssp,names(mech)) & time(mech, format ="years") %in% 2080:2100)
+r <- mean(subset(mech,idxs))
+names(r) <- 'mech_fitness'
+mech_fitness_2080.2100 <- as.data.frame(r)
+
+tmean_2080.2100 <- c()
+for(y in 2080:2100){
+  tmean_y <- sapply(gcms, function(m){
+    load(file.path("/home/victor/projects/future_forests/data/climate", ssp, m, paste0("bioclim_format/biovars_",y,".Rdata")))
+    return(biovars$bio1)
+  })
+  tmean_y <- rowMeans(tmean_y)
+  tmean_2080.2100 <- cbind(tmean_2080.2100, tmean_y)
+}
+tmean_2080.2100  <- rowMeans(tmean_2080.2100)
