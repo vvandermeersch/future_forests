@@ -40,6 +40,8 @@ fit_df <- cbind(tmean, mech_fitness, csdm_fitness)
 
 fit_df$tmean_approx <- ceiling(fit_df$tmean / 0.5) * 0.5
 
+range01 <- function(x){(x-min(x))/(max(x)-min(x))}
+
 mech_fitness_agg <- aggregate(mech_fitness ~ tmean_approx, data = fit_df, FUN = quantile, probs = c(0.05, 0.5, 0.95))
 csdm_fitness_agg <- aggregate(csdm_fitness ~ tmean_approx, data = fit_df, FUN = quantile, probs = c(0.05, 0.5, 0.95))
 fitness_agg <- merge(mech_fitness_agg, csdm_fitness_agg)
@@ -51,18 +53,18 @@ fitness_agg <- merge(mech_fitness_agg, csdm_fitness_agg)
 
 ggplot(data = fitness_agg) +
   geom_ribbon(aes(x = tmean_approx, ymin = mech_fitness[,'5%'], ymax = mech_fitness[,'95%']),
-              alpha = 0.1) +
-  geom_line(aes(x = tmean_approx, y = mech_fitness[,'5%']), linetype = 'dashed') +
-  geom_line(aes(x = tmean_approx, y = mech_fitness[,'50%']), linetype = 'solid') +
-  geom_line(aes(x = tmean_approx, y = mech_fitness[,'95%']), linetype = 'dashed') +
+              alpha = 0.3, fill = '#DCB0F2') +
+  geom_line(aes(x = tmean_approx, y = mech_fitness[,'5%']), linetype = 'dashed', color = '#DCB0F2') +
+  geom_line(aes(x = tmean_approx, y = mech_fitness[,'50%']), linetype = 'solid', color = '#DCB0F2') +
+  geom_line(aes(x = tmean_approx, y = mech_fitness[,'95%']), linetype = 'dashed', color = '#DCB0F2') +
   geom_ribbon(aes(x = tmean_approx, ymin = -csdm_fitness[,'5%'], ymax = -csdm_fitness[,'95%']),
-              alpha = 0.1) +
-  geom_line(aes(x = tmean_approx, y = -csdm_fitness[,'5%']), linetype = 'dashed') +
-  geom_line(aes(x = tmean_approx, y = -csdm_fitness[,'50%']), linetype = 'solid') +
-  geom_line(aes(x = tmean_approx, y = -csdm_fitness[,'95%']), linetype = 'dashed') +
-  geom_point(x = mean(tmean_2020.2040), y = mean(mech_fitness_2020.2040$mech_fitness), size = 1) +
-  geom_point(x = mean(tmean_2080.2100), y = mean(mech_fitness_2080.2100$mech_fitness), size = 1) +
-  theme_classic()
+              alpha = 0.3, fill = '#9EB9F3') +
+  geom_line(aes(x = tmean_approx, y = -csdm_fitness[,'5%']), linetype = 'dashed', color = '#9EB9F3') +
+  geom_line(aes(x = tmean_approx, y = -csdm_fitness[,'50%']), linetype = 'solid', color = '#9EB9F3') +
+  geom_line(aes(x = tmean_approx, y = -csdm_fitness[,'95%']), linetype = 'dashed', color = '#9EB9F3') +
+  # geom_point(x = mean(tmean_2020.2040), y = mean(mech_fitness_2020.2040$mech_fitness), size = 1) +
+  # geom_point(x = mean(tmean_2080.2100), y = mean(mech_fitness_2080.2100$mech_fitness), size = 1) +
+  theme_void()
 
 idxs <- which(grepl(ssp,names(mech)) & time(mech, format ="years") %in% 2020:2040)
 r <- mean(subset(mech,idxs))
