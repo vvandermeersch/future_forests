@@ -1,0 +1,83 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[top=1.00in, bottom=1.0in, left=1.1in, right=1.1in]{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[style=authoryear, backend=biber, natbib = true, style=numeric-comp, sortcites, hyperref, sorting=none, giveninits=true, doi=false,isbn=false,url=false,eprint=false, date=year, maxbibnames = 2, backend=bibtex]{biblatex}
+\AtEveryBibitem{\clearfield{pages}}
+\AtEveryBibitem{\clearlist{language}}
+\AtEveryBibitem{%
+  \clearfield{volume}%
+  \clearfield{number}}
+\AtEveryBibitem{\clearfield{title}}
+\renewbibmacro{in:}{}
+\usepackage[export]{adjustbox}
+
+
+\addbibresource{phd_bibliography.bib} 
+
+\begin{document}
+
+\pagenumbering{gobble}
+
+\noindent \includegraphics[width=0.5\textwidth, right]{img/forestry_letterhead.png}
+
+\vspace{0.25cm}
+
+\noindent Dear Dr. Wake, 
+
+\vspace{0.25cm} %emwAug10: Lots of edits, take or leave what works, and I am happy to read a final draft. 
+
+\noindent Please consider our manuscript, entitled ``Overlooked model uncertainties may misinform forest management strategies'', for publication in \emph{Nature Climate Change}. 
+This manuscript leverages methods from climatology to decompose ecological forecasts and guide forest management under uncertainty.
+
+\vspace{0.3cm}
+\noindent Forests are showing signs of becoming sources of carbon, putting pressure on ecological forecasts to inform current management decisions. Misinformed decision-making---because of incomplete forecasts---could have long-term detrimental consequences for ecosystems\supercite{Dawson2011, Urban2016}, driving forest decline and reducing carbon storage. Yet, current studies often rely on a narrow set of models and ignore a large part of the uncertainties\supercite{Wessely2024, Hanewinkel2013}, limiting their practical value for forest management. 
+
+\vspace{0.3cm} 
+\noindent Here, we apply climatological methods designed to aid decision-making given many models and associated uncertainties. We considered over 1,350 projections of tree species range shifts, using diverse ecological and climatological models, and across different emissions scenarios. By fully encompassing the different sources of uncertainty, we were able to quantify the contribution of each source to the forecast uncertainty, across species and across biomes.  %emwAug10: especially nice sentence here!
+
+%emwAug10: don't bury something interested in () -- remember that () means I can just NOT read it if I want. 
+\vspace{0.3cm} 
+\noindent Our results show that ecological models represent the largest source of uncertainty---up to two thirds---even under vastly different emission scenarios. While previous studies have strongly underestimated the overall forecast uncertainty, our workflow provides a comprehensive view of potential futures for forests. 
+% Uncertainties vary between biomes and species, highlighting pathways to improve forest management. 
+ %emwAug10: especially nice sentence below!
+We also identify regions where management could take immediate action with a low risk of failure, as well as regions where models strongly disagree, for which uncertainty management and diversification of options would be necessary.
+
+%emwAug10: maybe loop back in here something about climatology if easy (though feels less critical). 
+%emwAug10: Also, I would be careful to talk too much about Europe alone, I would angle more towards: we show how these methods work using Europe as a case study and/or mention 'in Europe and beyond' 
+\vspace{0.3cm}
+\noindent Using climatological methods to partition sources of forecast uncertainty, our findings could reshape the debate on ecological forecasting of  future species ranges. Although ecologists have spent decades debating the types of ecological model, our results provide a path to guide forest policy and management as science is advancing. 
+% contribute to a more complete assessment of both the threats and opportunities facing forests in Europe, and highlight regions where policies have to be carefully tailored to effectively address all uncertainties. 
+ %emwAug10: especially nice sentence below!
+We advocate the systematic incorporation of uncertainties into ecological forecasts and decision-making processes \supercite{Dawson2011, Urban2016, Saltelli2020}, and suggest that managers should internalize ecological uncertainty through diversified and more risk-averse strategies.
+
+% \vspace{0.3cm}
+% \noindent We would be happy to consider any suggestion you may have, but we are confident that this study belongs to a very high profile journal such as Nature Climate Change.
+
+\vspace{0.3cm}
+\noindent All authors contributed to this work and approve this version for submission. The manuscript is 2540 words, with 61 references and 4 figures, and is not under consideration elsewhere. We hope you find it suitable for publication in \emph{Nature Climate Change}, and look forward to hearing from you. 
+
+\vspace{0.3cm}
+\noindent Thank you in advance for your consideration.\\
+\vspace{0.1cm}
+
+\noindent Sincerely, \\
+\vspace{-1.5cm}\\
+\hspace*{-0.5cm}
+\includegraphics[scale=.5]{img/signature_longue.png} \\
+\vspace{-2cm}\\
+\noindent Victor Van der Meersch, PhD\\
+\noindent \emph{Forest \& Conservation Sciences}\\
+\noindent \emph{University of British Columbia}
+
+\clearpage
+
+\paragraph{References}
+\printbibliography[heading=none]
+
+
+\newpage
+
+\end{document}
+
+

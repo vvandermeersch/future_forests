@@ -1,0 +1,115 @@
+\documentclass[11pt,letter]{article}
+\usepackage[top=0.70in, bottom=0.7in, left=1.1in, right=1.1in]{geometry}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{xcolor} 
+\definecolor{Accent}{HTML}{bd2b00} 
+\usepackage{natbib}
+\usepackage{gensymb}
+\usepackage{hyperref}
+\hypersetup{colorlinks,citecolor = Accent, linkcolor = Accent,urlcolor = Accent, breaklinks=true}
+\usepackage{cleveref}
+\usepackage[labelfont=bf]{caption}
+\bibliographystyle{apalike}
+\usepackage{multirow}
+\usepackage{booktabs}
+
+\RequirePackage[labelfont={bf,sf},%
+                font={small, sf}]{caption}
+
+\usepackage{lineno}
+\renewcommand\linenumberfont{\normalfont\tiny\color{gray}}
+\renewcommand{\figurename}{Supplementary Figure}
+\renewcommand{\tablename}{Supplementary Table}
+
+\begin{document}
+
+\title{Overlooked model uncertainties may misinform forest management strategies
+% Alternative title: Integrating full model uncertainties could improve forest management
+}
+
+\author{Victor, Jérôme, Isabelle}
+\date{}
+\maketitle 
+
+\section*{Supplementary methods}
+
+\subsection*{Calibration of process-based models}
+
+The process-based model we used, PHENOFIT, was developed for several European tree species  and validated by comparing species distribution to the model outputs \citep{Saltre2013, Duputie2015, Gauzere2020, VanderMeersch2025}. Some parameters were directly measured or found in the literature (e.g. frost hardiness parameters). Phenology-related parameters were inferred using phenological observations across Europe -- provided through the TEMPO data portal (\url{data.pheno.fr}), the PEP725 database (\url{pep725.eu}) and the PhenoClim citizen science program (\url{https://spot.creamontblanc.org/en/programs/phenoclim}).
+
+\subsection*{Species distribution data}
+
+The calibration of correlative and hybrid models requires species presence data across all Europe. The data we used come mainly from forest inventories conducted across most European countries \citep{Mauri2017}. We completed it with presence records from the Global Biodiversity Information Facility \citep{GBIF2022}, removing occurrences outside the natural ranges of the species as defined by Atlas Florae Europaeae \citep{AFE2005} and EuroVegMap  \citep{EVM2003}. For the two mediterranean species included in this study (\emph{Q. ilex} and \emph{Q. pubescens}), we also used occurrences from the WOODIV database \citep{Monnet2021}. See \citet{VanderMeersch2025} for the details on the processing of occurrence data.
+
+\subsection*{Calibration of correlative models}
+
+We used four different models: GLM, GAM, BRT and Random Forest. We applied the tuning recommendations of \citet{Valavi2022}:\\
+- for GAM, GLM and BRT , background points were down-weighted so that their total weight was equal to the total weight of the presence points\\
+- for GLM, we allowed both linear and quadratic terms and applied a lasso regularization in order to avoid overfitting issues and improve model transferability. The model was tuned with the internal cross-validation feature of \emph{cv.glmnet} \\
+- for BRT, we estimated the optimal number of trees using the forward stepwise cross-validation approach implemend in the R package \emph{dismo}\\
+- for Random Forest, each tree was fitted with a bootstrap sample of presences and the same number of background points
+
+\subsection*{Calibration of hybrid models}
+
+Hybrid models correspond to process-based models entirely calibrated using species distribution data, as correlative models.
+We use the procedure described in \citet{VanderMeersch2023}, using the covariance matrix adaptation evolution strategy (CMA-ES), implemented on the GenOuest multicore cluster  (\url{genouest.org}). This robust algorithm allows to efficiently calibrate complex models \citep{Hansen2001}. We calibrated each species parameter set 10 times, using five repetitions on two random subsets of presences and pseudo-absences (see \citet{VanderMeersch2025} for details). We thus obtain ten different hybrid model version for each species.
+
+\section*{Supplementary figures}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\linewidth]{figures/species_surf.pdf}
+	\caption{\textbf{Share of European forest area by dominant tree species or genus.} Data at 1-km spatial resolution come from \citet{Brus2011}. A grid cell is considered forested if more than 10\% of its surface is covered by forest. }
+	\label{fig:manag}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{figures/piecharts_onlycsdm.pdf}
+	\caption{\textbf{Considering only correlative models leads to an underestimation of ecological model uncertainty.} This figure illustrates the level of uncertainty associated with projected changes in suitability relative to the historical period (1970–2000), \textbf{(a)} across all species and biomes and \textbf{(b)} for each biome. Here, we considered that the ecological model uncertainty is only explained by the differences between correlative modeling approaches.}
+	\label{fig:manag}
+\end{figure}
+
+\begin{table}[h]
+\centering
+\caption{\textbf{Projected change in habitat suitability and area loss for \emph{Fagus sylvatica} within its historical distribution, according to SSP2-4.5 (2080-2100).} Values represent the mean across model projections, with standard deviations in parentheses.}
+\begin{tabular}{@{}cccc@{}}
+\multirow{3}{*}{}  & \multicolumn{1}{c}{}  & \multicolumn{2}{c}{Mechanistic}  \\ 
+\cmidrule(l){3-4} & \multicolumn{2}{c}{Calibration with distribution data} &   \\ 
+\cmidrule(l){2-3} & Correlative   & Hybrid   & Process-based  \\ 
+\midrule \multirow{3}{*}{Change in suitability}   & -0.157 (0.0515)   & -0.113 (0.106) & \multirow{2}{*}{0.185 (0.0279)}  \\ 
+\cmidrule(lr){2-3}  & \multicolumn{2}{c}{-0.135 (0.0821)}  &  \\
+\cmidrule(l){2-4} & \multicolumn{3}{c}{-0.0282 (0.170)} \\ 
+\midrule \multirow{3}{*}{Percentage loss of area} & 29.3\% (13.3) & \multicolumn{1}{l}{31.7\% (16.6)}  & \multicolumn{1}{l}{\multirow{2}{*}{4.48\% (2.38)}} \\ 
+\cmidrule(lr){2-3} & \multicolumn{2}{c}{30.5\% (14.2)}  & \multicolumn{1}{l}{} \\ 
+\cmidrule(l){2-4}  & \multicolumn{3}{c}{21.8\% (17.1)}  \\ 
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{figures/allspecies_distribution_maps2-1.pdf}
+	\caption{Average change in projected distribution under scenario SSP2-4.5 (2080-2100 relative to 1970-2000), for  three ecological modeling approaches (correlative, hybrid, mechanistic).}
+	\label{fig:manag}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{figures/allspecies_distribution_maps1-1.pdf}
+	\caption{Average change in projected distribution under scenario SSP2-4.5 (2080-2100 relative to 1970-2000), for three ecological modeling approaches (correlative, hybrid, mechanistic).}
+	\label{fig:manag}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.95\linewidth]{figures/thermal_optima.pdf}
+	\caption{Geographic patterns of projection uncertainties reflect the position of species' thermal niches. In the continental biome, climatic conditions are closer to modelled thermal optima, leading to greater uncertainty depending on whether species shift toward or away from their optimum. Grey shading represents species suitability within each 1$^\circ$C bin over 1970-2100 (light grey: Q5-Q95; dark grey: Q25-Q75).}
+	\label{fig:manag}
+\end{figure}
+
+\clearpage
+
+\bibliography{phd_bibliography}
+
+\end{document}

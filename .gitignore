@@ -23,3 +23,7 @@
 *.yml
 *.fls
 *.fdb_latexmk
+*-blx.bib
+*.run.xml
+
+docs/img

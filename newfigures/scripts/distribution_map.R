@@ -58,7 +58,7 @@ dist_map_lessmore <- ggplot() +
   geom_spatvector(data = ctr, color = "grey40", fill = NA, linewidth = 0.1) +
   theme_void() +
   scale_y_continuous(expand = c(0, 0), limits = c(1298120, 5459220)) +
-  scale_x_continuous(expand = c(0, 0), limits = c(2441580, 6306970)) +
+  scale_x_continuous(expand = c(0, 0), limits = c(2441580, 6306970), position = 'top') +
   theme(
     legend.key.height  = unit(15, "pt"),
     legend.key.width = unit(10, "pt"),

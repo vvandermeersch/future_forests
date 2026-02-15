@@ -37,7 +37,7 @@ library(patchwork)
 
 ```
 
-```{r load_ecoregions, eval = TRUE}
+```{r load_ecoregions, eval = FALSE}
 
 source(file.path(wd, "newfigures", "scripts", "ecoregions.R"))
 
@@ -87,7 +87,7 @@ for(species in species_list){
 
 <!---  ## ANOVA-based partitioning within each species --->
 
-```{r anova_within_species_byecoregion, fig.height = 90, fig.width = 130, fig.cap = "ANOVA-based partitioning within species", dev = "cairo_pdf", eval = TRUE}
+```{r anova_within_species_byecoregion, fig.height = 90, fig.width = 130, fig.cap = "ANOVA-based partitioning within species", dev = "cairo_pdf", eval = FALSE}
 
 # switch
 reload_data <- FALSE
@@ -156,7 +156,7 @@ for(ecoregion in ecoregions){
                                reframe(meany = mean(y), int = sd(y)) %>%
                                mutate(ecoregion = ecoregion))
     
-    source(file.path(wd, "figures_cleaned", "scripts", "fig3", "anova_within_species.R"))
+    source(file.path(wd, "newfigures", "scripts", "fig3", "anova_within_species.R"))
     
     anova_ss
     
@@ -235,62 +235,7 @@ cascade_all_models
 
 ```
 
-```{r allspecies_distribution_maps, fig.height = 210, fig.width = 170, fig.cap = "All species, ssp2", dev = "cairo_pdf", eval = FALSE}
 
-scenario <- "ssp245"
-
-for(species in species_list){
-  type <- "csdm"
-  sim_dist_2090 <- readRDS(file = file.path(wd,"newfigures","data","maps", paste0(species, "_", type, "_2090_dist_", scenario, ".rds")))
-  source(file.path(wd, 'newfigures', 'scripts', 'distribution_map.R'))
-  csdm_dist2090 <- dist_map_lessmore
-  
-  type <- "expert"
-  sim_dist_2090 <- readRDS(file = file.path(wd,"newfigures","data","maps", paste0(species, "_", type, "_2090_dist_", scenario, ".rds")))
-  source(file.path(wd, 'newfigures', 'scripts', 'distribution_map.R'))
-  epbm_dist2090 <- dist_map_lessmore
-  
-  type <- "fitted"
-  sim_dist_2090 <- readRDS(file = file.path(wd,"newfigures","data","maps", paste0(species, "_", type, "_2090_dist_", scenario, ".rds")))
-  source(file.path(wd, 'newfigures', 'scripts', 'distribution_map.R'))
-  fpbm_dist2090 <- dist_map_lessmore
-  
-  
-  maps <- plot_grid(
-    csdm_dist2090 + theme(legend.position = 'none'), NULL,
-    fpbm_dist2090 + theme(legend.position = 'none'), NULL,
-    epbm_dist2090 + theme(legend.position = 'none'),
-    rel_widths = c(1,0.05,1,0.05,1), vjust = 2, hjust = -1,
-    nrow = 1)
-  
-  maps <- plot_grid(
-    csdm_dist2090 + theme(legend.position = 'none'), 
-    fpbm_dist2090 + theme(legend.position = 'none'), 
-    epbm_dist2090 + theme(legend.position = 'none'),
-    vjust = 2, hjust = -1,
-    nrow = 1)
-  
-  assign(paste("maps", species, sep = "_"), maps)
-}
-
-design <-
-  "ABC
-   DEF
-   GGG
-   HHH
-   IJK
-   LMN"
-
-assemble_fig <- 
-  maps_pinus_sylvestris + plot_spacer() + maps_abies_alba + 
-  maps_betula_pendula + plot_spacer() + maps_fraxinus_excelsior + 
-  maps_fagus_sylvatica +
-  plot_spacer() + 
-  maps_quercus_robur + plot_spacer() + maps_quercus_petraea + 
-  maps_quercus_pubescens + plot_spacer() + maps_quercus_ilex + 
-  plot_layout(design = design,  widths = c(1, 0.1, 1), heights = c(0.8, 0.8, 1.7,0.5))
-
-```
 
 ```{r fagussylvatica_distribution_maps, fig.height = 90, fig.width = 180, fig.cap = "Fagus sylvatica, ssp2", dev = "cairo_pdf", eval = FALSE}
 
@@ -530,6 +475,144 @@ plot_spacer() + map_suitability_3zones + plot_spacer() +
 
 ```
 
+```{r europesummary, fig.height = 80, fig.width = 165, fig.cap = "ANOVA-based partitioning across species", dev = "cairo_pdf", eval = FALSE}
+
+map_suitability_3zones <- ggplot() +
+  geom_spatraster(data = suit_r, maxcell = 1e+05) +
+  geom_sf_pattern(data = sim_agreement, 
+                  aes(pattern = value),
+                  color = NA, fill = NA,
+                  pattern_colour = NA,
+                  pattern_fill = "grey50",
+                  pattern_angle = 45,
+                  pattern_density = 0.2,
+                  pattern_spacing = 0.015,
+                  pattern_key_scale_factor = 3) +
+  scale_pattern_manual(values = c(Low = "stripe"), labels = c("Low model agreement"), name = NULL) +
+  geom_spatvector(data = ctr2 %>%  simplifyGeom(tolerance=5000, preserveTopology=TRUE, makeValid=FALSE), 
+                  color = "grey40", fill = NA, linewidth = 0.1) +
+  theme_void() +
+  
+  # scale_y_continuous(expand = c(0, 0), limits = c(1287903, 5459220)) +
+  # scale_x_continuous(expand = c(0, 0), limits = c(2440871, 6306970)) +
+  
+  theme(
+    legend.title = element_blank(),
+    legend.title.position = 'top',
+    legend.text = element_text(size = 6.5, color = 'grey20'),
+    legend.position = "bottom", legend.box="horizontal",
+    legend.box.margin = margin(t = 0, b = 0, r = 0, l = 0),
+    plot.margin = margin(t=5.5,b=5.5,l=60,r=60),
+    strip.text = element_text(size = 8, margin = margin(t=0,b=5,l=0,r=0)),
+    panel.border = element_rect(colour = NA, fill=NA, linewidth=0.4),
+    panel.grid.major = element_line(color = "grey90")) +
+  scale_fill_gradient2(
+    low = "#a63716",
+    mid = "#eef0f1",
+    high = "#15607a",
+    na.value = "transparent", 
+    limits = c(-0.45, 0.45),
+    breaks = seq(-0.4, 0.4, 0.2), 
+    labels = c("-0.4", "-0.2", "0", "0.2", "0.4"),
+    name = 'Change in suitability'
+  ) +
+  guides(
+    fill = guide_colorbar(order = 2,
+                          frame.colour = "grey30", ticks.colour = NA,
+                          frame.linewidth = 0.2,
+                          theme = theme(legend.key.height  = unit(5, "pt"),
+                                        legend.key.width  = unit(120, "pt"),
+                                        legend.text = element_text(size = 6.5, margin = margin(t = 3.5)))),
+    pattern = guide_legend(override.aes = list(fill = "white", color = "grey30"), order = 1,
+                           theme = theme(legend.key.height  = unit(6, "pt"),
+                                         legend.text = element_text(size = 7)))) +
+  geom_spatvector(data = ctratlmed, 
+                  color = "white", fill = NA, linewidth = 0.8) +
+  geom_spatvector(data = ctratlmed, 
+                  color = "#a63716", fill = NA, linewidth = 0.25) +
+  geom_spatvector(data = ctrcont, 
+                  color = "white", fill = NA, linewidth = 0.8) +
+  geom_spatvector(data = ctrcont, 
+                  color = "#607a15", fill = NA, linewidth = 0.25) +
+  geom_spatvector(data = ctrbor, 
+                  color = "white", fill = NA, linewidth = 0.8) +
+  geom_spatvector(data = ctrbor, 
+                  color = "#15607a", fill = NA, linewidth = 0.25) +
+  
+  geom_spatvector(data = ctratlmed_pt, 
+                  color = "#a63716", fill = NA, size = 1.375) +
+  geom_spatvector(data = ctratlmed_line, 
+                  color = "#a63716", fill = NA, linewidth = 0.3) +
+  geom_spatvector(data = ctratlmed_pt, 
+                color = "white", fill = 'white', size = 0.93) +
+  geom_spatvector(data = ctratlmed_pt, 
+                  color = "#a63716", fill = NA, size = 0.25) +
+  
+  annotate(geom = 'point', size = 1.375, color = '#a63716',
+           y = 2e06, x = 3100000) +
+  annotate(geom = 'segment', linewidth = 0.3, color = '#a63716',
+           y = 2e06, yend = 2e06, x = 1940871, xend = 3100000) +
+  annotate(geom = 'segment', linewidth = 0.3, color = '#a63716',
+           y = 2e06-2.5e5, yend = 2e06+4.5e5, x = 1940871, xend = 1940871) +
+  annotate("text", x = 1940871+3e4, y = 2e06+6e5, label = "Mediterranean and Atlantic forests", 
+           hjust = 1, color = '#a63716', size = 2.5) +
+  annotate("text", x = 1940871-1e5, y = 2e06+1e5, 
+           label = 
+             paste("High agreement between models",
+                   'Overall decrease in suitability', 'Introduce better-adapted populations (and species)', sep = '\n'), 
+           hjust = 1, color = 'grey40', size = 2.2) +
+  annotate(geom = 'point', size = 0.93, color = 'white',
+           y = 2e+06, x = 3100000) +
+  annotate(geom = 'point', size = 0.25, color = '#a63716',
+           y = 2e+06, x = 3100000) +
+  
+  annotate(geom = 'point', size = 1.375, color = '#607a15',
+           y = 3200000, x = 5300000) +
+  annotate(geom = 'segment', linewidth = 0.3, color = '#607a15',
+           y = 3200000, yend = 3200000, x = 5300000, xend = 6806970) +
+  annotate(geom = 'segment', linewidth = 0.3, color = '#607a15',
+           y = 3200000-2.5e5, yend = 3200000+4.5e5, x = 6806970, xend = 6806970) +
+  annotate("text", x = 6806970-3e4, y = 3200000+6e5, label = "Continental & mid-mountain forests", 
+           hjust = 0, color = '#607a15', size = 2.5) +
+  annotate("text", x = 6806970+1e5, y = 3200000+1e5, 
+           label = 
+             paste("Low agreement between models",
+                   'No clear trend in suitability',  'Increase diversity to mitigate risks', sep = '\n'), 
+           hjust = 0, color = 'grey40', size = 2.2) +
+  annotate(geom = 'point', size = 0.93, color = 'white',
+           y = 3200000, x = 5300000) +
+  annotate(geom = 'point', size = 0.25, color = '#607a15',
+           y = 3200000, x = 5300000) +
+  
+  annotate(geom = 'point', size = 1.375, color = '#15607a',
+           y = 4500000, x = 4550000) +
+  annotate(geom = 'segment', linewidth = 0.3, color = '#15607a',
+           y = 4500000, yend = 4500000, x = 1940871, xend = 4550000) +
+  annotate(geom = 'segment', linewidth = 0.3, color = '#15607a',
+           y = 4500000-2.5e5, yend = 4500000+4.5e5, x = 1940871, xend = 1940871) +
+  annotate("text", x = 1940871+3e4, y = 4500000+6e5, label = "North European & Alps forests", 
+           hjust = 1, color = '#15607a', size = 2.5) +
+  annotate("text", x = 1940871-1e5, y = 4500000+1e5, 
+           label = 
+             paste("High agreement between models", # 32.1% of total timber harvest (2000-2010)
+                   'Overall increase in suitability', 'Consider new opportunities to improve resilience', sep = '\n'), 
+           hjust = 1, color = 'grey40', size = 2.2) +
+  annotate(geom = 'point', size = 0.93, color = 'white',
+           y = 4500000, x = 4550000) +
+  annotate(geom = 'point', size = 0.25, color = '#15607a',
+           y = 4500000, x = 4550000) +
+  
+  coord_sf(clip = 'off', xlim = c(2440871, 6306970),
+           ylim = c(1287903, 5459220), expand = FALSE) +
+   annotate("text", x = 5680000, y = 1.05e06, label = "Average suitability change", 
+           hjust = 0.5, color = 'grey20', size = 2.4) 
+
+
+plot_spacer() + map_suitability_3zones + plot_spacer() +
+  plot_layout(nrow = 1, width = c(.55,1,.55))
+
+```
+
 <!---  ## ANOVA-based partitioning within each species, only CSDM --->
 
 ```{r anova_within_species_byecoregion_onlycsdm, fig.height = 100, fig.width = 80, fig.cap = "ANOVA-based partitioning within species - ONLY CSDM", dev = "cairo_pdf", eval = FALSE}
@@ -554,12 +637,12 @@ for(ecoregion in ecoregions){
     if(reload_data){
 
       # load simulations of CSDMs
-      source(file.path(wd, "figures_cleaned", "scripts", "fig1", "load_yearly_fitness_csdm.R"))
-      saveRDS(simulations_csdm, file.path(wd,"figures_cleaned", "data", "sims", paste0("csdm_", species, "_", ecoregion, ".rds")))
+      source(file.path(wd, "newfigures", "scripts", "fig1", "load_yearly_fitness_csdm.R"))
+      saveRDS(simulations_csdm, file.path(wd,"newfigures", "data", "sims", paste0("csdm_", species, "_", ecoregion, ".rds")))
       
     }else{
       
-      simulations_csdm <- readRDS(file.path(wd, "figures_cleaned","data", "sims", paste0("csdm_", species, "_", ecoregion, ".rds"))) 
+      simulations_csdm <- readRDS(file.path(wd, "newfigures","data", "sims", paste0("csdm_", species, "_", ecoregion, ".rds"))) 
     }
     
     simulations <- simulations_csdm %>%
@@ -580,7 +663,7 @@ for(ecoregion in ecoregions){
                                reframe(meany = mean(y), int = sd(y)) %>%
                                mutate(ecoregion = ecoregion))
     
-    source(file.path(wd, "figures_cleaned", "scripts", "fig3", "anova_within_species.R"))
+    source(file.path(wd, "newfigures", "scripts", "fig3", "anova_within_species.R"))
     
     anova_ss
     
@@ -597,15 +680,18 @@ data_barplot <- data_barplot %>%
     mutate(ecoregion = factor(ecoregion, levels = rev(c("Boreal", "Alpine", "Continental", "Atlantic", "Mediterranean"))))
 
 # source(file.path(wd, "figures_cleaned", "scripts", "fig2", "barplot_uncertainty_across_species.R"))
-source(file.path(wd, "figures_cleaned", "scripts", "fig3", "barplot_uncertainty_withinspecies.R"))
+# source(file.path(wd, "newfigures", "scripts", "fig3", "barplot_uncertainty_withinspecies.R"))
 
 
-barplot_prop_uncertainty_withinspecies +
-  draw_plot(insetlegend, x = 0.78, y = .4, width = 1.2, height = .4) +
-  scale_fill_manual(name = "",
-                    breaks = c("ssp", "gcm.ssp", "gcm", "sdm.climate", "sdm", "residuals"),
-                    labels = c("SSP", "SSP - GCM", "GCM", "Climate - CSDM", "CSDM", "Residuals"),
-                    values=cols)
+# barplot_prop_uncertainty_withinspecies +
+#   draw_plot(insetlegend, x = 0.78, y = .4, width = 1.2, height = .4) +
+#   scale_fill_manual(name = "",
+#                     breaks = c("ssp", "gcm.ssp", "gcm", "sdm.climate", "sdm", "residuals"),
+#                     labels = c("SSP", "SSP - GCM", "GCM", "Climate - CSDM", "CSDM", "Residuals"),
+#                     values=cols)
+
+source(file.path(wd, "newfigures", "scripts", "fig3", "inset_piecharts.R"))
+source(file.path(wd, "newfigures", "scripts", "fig3", "inset_summary.R"))
 
 cat("ANOVA-based partitioning within species")
 knitr::kable(data_barplot %>%
@@ -622,6 +708,108 @@ knitr::kable(data_barplot %>%
 
 knitr::kable(data_barplot %>%
   summarise(sdm = mean(sdm/tot*100), climate = mean((gcm+ssp+gcm.ssp)/tot*100), gcm = mean(gcm/tot*100), ssp = mean(ssp/tot*100)))
+
+
+```
+
+<!-- ## Maps for other species -->
+
+```{r allspecies_distribution_maps1, fig.height = 210, fig.width = 150, fig.cap = "All species, ssp2", dev = "cairo_pdf", eval = FALSE}
+species_list <- c("abies_alba","quercus_petraea","quercus_robur","quercus_pubescens","quercus_ilex","betula_pendula","fraxinus_excelsior","pinus_sylvestris")
+species_name <- c("Abies alba","Quercus petraea","Quercus robur","Quercus pubescens","Quercus ilex","Betula pendula","Fraxinus excelsior","Pinus sylvestris")
+
+scenario <- "ssp245"
+
+for(s in 1:length(species_list)){
+  
+  type <- "csdm"
+  sim_dist_2090 <- readRDS(file = file.path(wd,"newfigures","data","maps", paste0(species_list[s], "_", type, "_2090_dist_", scenario, ".rds")))
+  source(file.path(wd, 'newfigures', 'scripts', 'distribution_map.R'))
+  csdm_dist2090 <- dist_map_lessmore + theme(plot.margin = margin(b = 10)) +
+    theme(legend.position = 'none',
+          axis.title.y = element_text(size = 10, angle = 90, 
+                                      margin = margin(r = 10), face = "italic")) + 
+    ylab(species_name[s])
+  
+  type <- "expert"
+  sim_dist_2090 <- readRDS(file = file.path(wd,"newfigures","data","maps", paste0(species_list[s], "_", type, "_2090_dist_", scenario, ".rds")))
+  source(file.path(wd, 'newfigures', 'scripts', 'distribution_map.R'))
+  epbm_dist2090 <- dist_map_lessmore + theme(plot.margin = margin(b = 10))
+  
+  type <- "fitted"
+  sim_dist_2090 <- readRDS(file = file.path(wd,"newfigures","data","maps", paste0(species_list[s], "_", type, "_2090_dist_", scenario, ".rds")))
+  source(file.path(wd, 'newfigures', 'scripts', 'distribution_map.R'))
+  fpbm_dist2090 <- dist_map_lessmore + theme(plot.margin = margin(b = 10))
+  
+  
+  if(species_list[s] %in% c('pinus_sylvestris', 'quercus_robur')){
+    csdm_dist2090 <- csdm_dist2090 + 
+      ggtitle('Correlative') + 
+      theme(axis.title.y = element_text(size = 10, angle = 90, 
+            margin = margin(r = 10), face = "italic"),
+            plot.title = element_text(size = 10, angle = 0, hjust = 0.5,
+            margin = margin(b = 5), face = "italic"),
+            plot.margin = margin(b = 10)) 
+    fpbm_dist2090 <- fpbm_dist2090 + 
+      ggtitle('Hybrid') + 
+      theme(axis.title.y = element_text(size = 10, angle = 90, 
+            margin = margin(r = 10), face = "italic"),
+            plot.title = element_text(size = 10, angle = 0, hjust = 0.5,
+            margin = margin(b = 5), face = "italic"),
+            plot.margin = margin(b = 10)) 
+    epbm_dist2090 <- epbm_dist2090 + 
+      ggtitle('Mechanistic') + 
+      theme(axis.title.y = element_text(size = 10, angle = 90, 
+            margin = margin(r = 10), face = "italic"),
+            plot.title = element_text(size = 10, angle = 0, hjust = 0.5,
+            margin = margin(b = 5), face = "italic"),
+            plot.margin = margin(b = 10)) 
+      
+      
+  }
+  
+  maps <- plot_grid(
+    csdm_dist2090, 
+    fpbm_dist2090 + theme(legend.position = 'none'), 
+    epbm_dist2090 + theme(legend.position = 'none'),
+    vjust = 2, hjust = -1,
+    nrow = 1, align = 'hv')
+  
+  assign(paste("maps", species_list[s], sep = "_"), maps)
+}
+
+
+
+assemble_fig <- 
+  maps_quercus_robur + 
+  maps_quercus_petraea + 
+  maps_quercus_pubescens + 
+  maps_quercus_ilex + 
+  plot_layout(ncol = 1)
+
+assemble_fig
+
+```
+
+```{r allspecies_distribution_maps2, fig.height = 210, fig.width = 150, fig.cap = "All species, ssp2", dev = "cairo_pdf", eval = FALSE}
+
+
+
+assemble_fig <- 
+  maps_pinus_sylvestris +
+  maps_abies_alba + 
+  maps_betula_pendula + 
+  maps_fraxinus_excelsior +
+  plot_layout(ncol = 1)
+
+assemble_fig
+
+```
+
+<!-- ## Maps for thermal niches -->
+
+```{r thermal_niches, fig.height = 120, fig.width = 120, fig.cap = "Thermal optima", dev = "cairo_pdf", eval = FALSE}
+
 
 
 ```

@@ -155,6 +155,11 @@ fit_change_csdm$data <- 'dist'
 fit_change <- rbind(fit_change_csdm, fit_change_fpbm, fit_change_epbm)
 
 fit_change %>% 
+  dplyr::group_by(ssp, type) %>%
+  dplyr::summarise(avgchange = mean(fit_change), sdchange = sd(fit_change),
+                   avgloss = mean(perc_loss), sdloss = sd(perc_loss))
+
+fit_change %>% 
   dplyr::group_by(ssp, data) %>%
   dplyr::summarise(avgchange = mean(fit_change), sdchange = sd(fit_change),
                    avgloss = mean(perc_loss), sdloss = sd(perc_loss))
@@ -162,4 +167,4 @@ fit_change %>%
 fit_change %>% 
   dplyr::group_by(ssp) %>%
   dplyr::summarise(avgchange = mean(fit_change), sdchange = sd(fit_change),
-                   avgloss = mean(perc_loss), sdloss = mean(perc_loss))
+                   avgloss = mean(perc_loss), sdloss = sd(perc_loss))

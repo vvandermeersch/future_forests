@@ -1,12 +1,27 @@
 
+ssp <- c("ssp245")
+gcms <- c("GFDL-ESM4", "IPSL-CM6A-LR", "MPI-ESM1-2-HR", "MRI-ESM2-0", "UKESM1-0-LL")
+
 cont <- ecorast_wgs84 %>% filter(val == 'Continental')
 med <- ecorast_wgs84 %>% filter(val == 'Mediterranean')
 bor <- ecorast_wgs84 %>% filter(val == 'Boreal')
 
+tmean <- c()
+for(y in 1970:2100){
+  tmean_y <- sapply(gcms, function(m){
+    load(file.path(wd, "data/climate", ssp, m, paste0("bioclim_format/biovars_",y,".Rdata")))
+    biovars <- rast(biovars[,c('lon', 'lat', 'bio1')])
+    return(values(biovars, na.rm = T))
+  })
+  tmean_y <- rowMeans(tmean_y)
+  tmean <- cbind(tmean, tmean_y)
+}
+tmean <- rowMeans(tmean)
+
 tmean_hist_cont <- c()
 for(y in 1970:2000){
   tmean_y <- sapply(gcms, function(m){
-    load(file.path("/home/victor/projects/future_forests/data/climate", ssp, m, paste0("bioclim_format/biovars_",y,".Rdata")))
+    load(file.path(wd, "data/climate", ssp, m, paste0("bioclim_format/biovars_",y,".Rdata")))
     biovars <- crop(rast(biovars[,c('lon', 'lat', 'bio1')]), cont, mask = T)
     return(values(biovars, na.rm = T))
   })
@@ -18,7 +33,7 @@ tmean_hist_cont <- rowMeans(tmean_hist_cont)
 tmean_20802100_cont <- c()
 for(y in 2080:2100){
   tmean_y <- sapply(gcms, function(m){
-    load(file.path("/home/victor/projects/future_forests/data/climate", ssp, m, paste0("bioclim_format/biovars_",y,".Rdata")))
+    load(file.path(wd, "data/climate", ssp, m, paste0("bioclim_format/biovars_",y,".Rdata")))
     biovars <- crop(rast(biovars[,c('lon', 'lat', 'bio1')]), cont, mask = T)
     return(values(biovars, na.rm = T))
   })
@@ -28,7 +43,7 @@ for(y in 2080:2100){
 tmean_20802100_cont <- rowMeans(tmean_20802100_cont)
 
 
-mech <- rast('/home/victor/projects/future_forests/data/processed/fagus_sylvatica/suit/expert.tif')
+mech <- rast(file.path(wd, 'data/processed/fagus_sylvatica/suit/expert.tif'))
 idxs <- which((grepl(ssp,names(mech)) | grepl('hist',names(mech))) & time(mech, format ="years") %in% 1970:2100)
 r <- mean(subset(mech,idxs))
 names(r) <- 'mech_fitness'
@@ -57,10 +72,10 @@ csdm_fitness <- sapply(sdms, function(s){
   fit <- sapply(gcms, function(m){
     fit <- sapply(periods, function(p){
       if(p == 'historical'){
-        proj <- readRDS(file.path("/home/victor/projects/future_forests/data/simulations/fagus_sylvatica",s, m, paste0(p, ".rds")))
+        proj <- readRDS(file.path(wd, "data/simulations/fagus_sylvatica",s, m, paste0(p, ".rds")))
         return(proj$value)
       }
-      proj <- readRDS(file.path("/home/victor/projects/future_forests/data/simulations/fagus_sylvatica",s, m, "ssp245", paste0(p, ".rds")))
+      proj <- readRDS(file.path(wd, "data/simulations/fagus_sylvatica",s, m, "ssp245", paste0(p, ".rds")))
       return(proj$value)
     })
     fit <- rowMeans(fit)
@@ -78,11 +93,11 @@ csdm_fitness_cont_hist <- sapply(sdms, function(s){
     fit <- sapply(periods, function(p){
       print(p)
       if(p == 'historical'){
-        proj <- readRDS(file.path("/home/victor/projects/future_forests/data/simulations/fagus_sylvatica",s, m, paste0(p, ".rds")))
+        proj <- readRDS(file.path(wd, "data/simulations/fagus_sylvatica",s, m, paste0(p, ".rds")))
         proj <- crop(rast(proj[,c(2,1,3)]), cont, mask = T)
         return(values(proj, na.rm = T))
       }
-      proj <- readRDS(file.path("/home/victor/projects/future_forests/data/simulations/fagus_sylvatica",s, m, "ssp245", paste0(p, ".rds")))
+      proj <- readRDS(file.path(wd, "data/simulations/fagus_sylvatica",s, m, "ssp245", paste0(p, ".rds")))
       proj <- crop(rast(proj[,c(2,1,3)]), cont, mask = T)
       return(values(proj, na.rm = T))
     })
@@ -99,11 +114,11 @@ csdm_fitness_cont_20802100 <- sapply(sdms, function(s){
   fit <- sapply(gcms, function(m){
     fit <- sapply(periods, function(p){
       if(p == 'historical'){
-        proj <- readRDS(file.path("/home/victor/projects/future_forests/data/simulations/fagus_sylvatica",s, m, paste0(p, ".rds")))
+        proj <- readRDS(file.path(wd, "data/simulations/fagus_sylvatica",s, m, paste0(p, ".rds")))
         proj <- crop(rast(proj[,c(2,1,3)]), cont, mask = T)
         return(values(proj, na.rm = T))
       }
-      proj <- readRDS(file.path("/home/victor/projects/future_forests/data/simulations/fagus_sylvatica",s, m, "ssp245", paste0(p, ".rds")))
+      proj <- readRDS(file.path(wd, "data/simulations/fagus_sylvatica",s, m, "ssp245", paste0(p, ".rds")))
       proj <- crop(rast(proj[,c(2,1,3)]), cont, mask = T)
       return(values(proj, na.rm = T))
     })
@@ -124,7 +139,7 @@ csdm_fitness_cont_20802100 <- (csdm_fitness_cont_20802100-min(csdm_fitness))/(ma
 tmean_hist_med <- c()
 for(y in 1970:2000){
   tmean_y <- sapply(gcms, function(m){
-    load(file.path("/home/victor/projects/future_forests/data/climate", ssp, m, paste0("bioclim_format/biovars_",y,".Rdata")))
+    load(file.path(wd, "data/climate", ssp, m, paste0("bioclim_format/biovars_",y,".Rdata")))
     biovars <- crop(rast(biovars[,c('lon', 'lat', 'bio1')]), med, mask = T)
     return(values(biovars, na.rm = T))
   })
@@ -136,7 +151,7 @@ tmean_hist_med <- rowMeans(tmean_hist_med)
 tmean_20802100_med <- c()
 for(y in 2080:2100){
   tmean_y <- sapply(gcms, function(m){
-    load(file.path("/home/victor/projects/future_forests/data/climate", ssp, m, paste0("bioclim_format/biovars_",y,".Rdata")))
+    load(file.path(wd, "data/climate", ssp, m, paste0("bioclim_format/biovars_",y,".Rdata")))
     biovars <- crop(rast(biovars[,c('lon', 'lat', 'bio1')]), med, mask = T)
     return(values(biovars, na.rm = T))
   })
@@ -166,11 +181,11 @@ csdm_fitness_med_hist <- sapply(sdms, function(s){
     fit <- sapply(periods, function(p){
       print(p)
       if(p == 'historical'){
-        proj <- readRDS(file.path("/home/victor/projects/future_forests/data/simulations/fagus_sylvatica",s, m, paste0(p, ".rds")))
+        proj <- readRDS(file.path(wd, "data/simulations/fagus_sylvatica",s, m, paste0(p, ".rds")))
         proj <- crop(rast(proj[,c(2,1,3)]), med, mask = T)
         return(values(proj, na.rm = T))
       }
-      proj <- readRDS(file.path("/home/victor/projects/future_forests/data/simulations/fagus_sylvatica",s, m, "ssp245", paste0(p, ".rds")))
+      proj <- readRDS(file.path(wd, "data/simulations/fagus_sylvatica",s, m, "ssp245", paste0(p, ".rds")))
       proj <- crop(rast(proj[,c(2,1,3)]), med, mask = T)
       return(values(proj, na.rm = T))
     })
@@ -187,11 +202,11 @@ csdm_fitness_med_20802100 <- sapply(sdms, function(s){
   fit <- sapply(gcms, function(m){
     fit <- sapply(periods, function(p){
       if(p == 'historical'){
-        proj <- readRDS(file.path("/home/victor/projects/future_forests/data/simulations/fagus_sylvatica",s, m, paste0(p, ".rds")))
+        proj <- readRDS(file.path(wd, "data/simulations/fagus_sylvatica",s, m, paste0(p, ".rds")))
         proj <- crop(rast(proj[,c(2,1,3)]), med, mask = T)
         return(values(proj, na.rm = T))
       }
-      proj <- readRDS(file.path("/home/victor/projects/future_forests/data/simulations/fagus_sylvatica",s, m, "ssp245", paste0(p, ".rds")))
+      proj <- readRDS(file.path(wd, "data/simulations/fagus_sylvatica",s, m, "ssp245", paste0(p, ".rds")))
       proj <- crop(rast(proj[,c(2,1,3)]), med, mask = T)
       return(values(proj, na.rm = T))
     })
@@ -215,7 +230,7 @@ csdm_fitness_med_20802100 <- (csdm_fitness_med_20802100-min(csdm_fitness))/(max(
 tmean_hist_bor <- c()
 for(y in 1970:2000){
   tmean_y <- sapply(gcms, function(m){
-    load(file.path("/home/victor/projects/future_forests/data/climate", ssp, m, paste0("bioclim_format/biovars_",y,".Rdata")))
+    load(file.path(wd, "data/climate", ssp, m, paste0("bioclim_format/biovars_",y,".Rdata")))
     biovars <- crop(rast(biovars[,c('lon', 'lat', 'bio1')]), bor, mask = T)
     return(values(biovars, na.rm = T))
   })
@@ -227,7 +242,7 @@ tmean_hist_bor <- rowMeans(tmean_hist_bor)
 tmean_20802100_bor <- c()
 for(y in 2080:2100){
   tmean_y <- sapply(gcms, function(m){
-    load(file.path("/home/victor/projects/future_forests/data/climate", ssp, m, paste0("bioclim_format/biovars_",y,".Rdata")))
+    load(file.path(wd, "data/climate", ssp, m, paste0("bioclim_format/biovars_",y,".Rdata")))
     biovars <- crop(rast(biovars[,c('lon', 'lat', 'bio1')]), bor, mask = T)
     return(values(biovars, na.rm = T))
   })
@@ -257,11 +272,11 @@ csdm_fitness_bor_hist <- sapply(sdms, function(s){
     fit <- sapply(periods, function(p){
       print(p)
       if(p == 'historical'){
-        proj <- readRDS(file.path("/home/victor/projects/future_forests/data/simulations/fagus_sylvatica",s, m, paste0(p, ".rds")))
+        proj <- readRDS(file.path(wd, "data/simulations/fagus_sylvatica",s, m, paste0(p, ".rds")))
         proj <- crop(rast(proj[,c(2,1,3)]), bor, mask = T)
         return(values(proj, na.rm = T))
       }
-      proj <- readRDS(file.path("/home/victor/projects/future_forests/data/simulations/fagus_sylvatica",s, m, "ssp245", paste0(p, ".rds")))
+      proj <- readRDS(file.path(wd, "data/simulations/fagus_sylvatica",s, m, "ssp245", paste0(p, ".rds")))
       proj <- crop(rast(proj[,c(2,1,3)]), bor, mask = T)
       return(values(proj, na.rm = T))
     })
@@ -278,11 +293,11 @@ csdm_fitness_bor_20802100 <- sapply(sdms, function(s){
   fit <- sapply(gcms, function(m){
     fit <- sapply(periods, function(p){
       if(p == 'historical'){
-        proj <- readRDS(file.path("/home/victor/projects/future_forests/data/simulations/fagus_sylvatica",s, m, paste0(p, ".rds")))
+        proj <- readRDS(file.path(wd, "data/simulations/fagus_sylvatica",s, m, paste0(p, ".rds")))
         proj <- crop(rast(proj[,c(2,1,3)]), bor, mask = T)
         return(values(proj, na.rm = T))
       }
-      proj <- readRDS(file.path("/home/victor/projects/future_forests/data/simulations/fagus_sylvatica",s, m, "ssp245", paste0(p, ".rds")))
+      proj <- readRDS(file.path(wd, "data/simulations/fagus_sylvatica",s, m, "ssp245", paste0(p, ".rds")))
       proj <- crop(rast(proj[,c(2,1,3)]), bor, mask = T)
       return(values(proj, na.rm = T))
     })

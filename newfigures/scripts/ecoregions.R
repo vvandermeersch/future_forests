@@ -1,11 +1,11 @@
 
 # Load ecoregions shapefile
-ecoregions <- vect( file.path(wd, "figures_cleaned/data", "eea_bioregions", "BiogeoRegions2016.shp")) %>% project("EPSG:3035")
+ecoregions <- vect( file.path(wd, "newfigures/data", "eea_bioregions", "BiogeoRegions2016.shp")) %>% project("EPSG:3035")
 ecoregions <- simplifyGeom(ecoregions, 7830.79, makeValid=TRUE)
 
 # Load simulation grid (by loading one of the simulated raster, for example Fagus for some model)
 scenario <- "ssp245"; type <- 'expert'; species <- "fagus_sylvatica"
-sim_distribution <- readRDS(file = file.path(wd, "figures_cleaned", "data", "maps", paste0(species, "_", type, "_distribution_", scenario, ".rds")))
+sim_distribution <- readRDS(file = file.path(wd, "newfigures", "data", "maps", paste0(species, "_", type, "_distribution_", scenario, ".rds")))
 grid <- subset(sim_distribution,2) %>% project("EPSG:3035") 
 names(grid) <- "val"
 
@@ -44,7 +44,7 @@ ecorast2 <- ecorast %>%
 
 ctr2 <- ifel(is.na(ecorast2), 0, 1) %>% as.polygons()
 
-saveRDS(ecorast2, file.path(wd, "figures_cleaned", "data", "sims", "ecoregions_rast.rds"))
+saveRDS(ecorast2, file.path(wd, "newfigures", "data", "sims", "ecoregions_rast.rds"))
 
 ecoregions_map <- ggplot() +
   geom_spatraster(data = ecorast2, alpha = 0.8) +

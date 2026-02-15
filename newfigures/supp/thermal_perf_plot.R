@@ -1,9 +1,11 @@
 
+pdf.
 
 binbreaks <- seq(-6,26,1)
 bins <- as.integer(cut(tmean, breaks = binbreaks, right = FALSE))
 
 
+par(mar = c(5,5,3,3))
 plot(x = NULL,
      y = NULL,
      xlim = c(-6, 26),
@@ -11,21 +13,39 @@ plot(x = NULL,
      xaxt = 'n',
      yaxt = 'n',
      xlab = 'Temperature',
-     ylab = 'Fitness',
-     bty = "n")
+     ylab = 'Suitability',
+     bty = "n",
+     cex.lab = 0.9)
 
 delta <- 0.05
-axis(1, at = seq(-5,25,5))
+axis(1, at = seq(-5,25,5), cex.axis = 0.85)
 
 axis(2, at = seq(0, 1, 0.25)+delta, labels = c(0, NA, 0.5, NA, 1), cex.axis = 0.85)
 axis(2, at = seq(-1, 0, 0.25)-delta, labels = c(1, NA, 0.5, NA, 0), cex.axis = 0.85)
 
 legend("topright",
-       legend = c("Continental", "Boreal"),
-       col = c("#d5af7b", "#4faba0"),
-       lwd = c(2,2),
+       inset = c(0.23, 0),
+       legend = c('Mediterranean', "Continental", "Boreal"),
+       col = c("#ed947e", "#d5af7b", "#4faba0"),
+       lwd = 2.3,
        bty = "n",
        cex = 0.8)
+
+arrows(x0 = 19.3-4, x1 = 20.9-4,
+       y0 = 0.67, y1 = 0.67,
+       length = 0.08, angle = 25, col = 'black', lwd = 1.3)
+
+text(x = 21.65-4, y = 0.67, labels  = 'Shift (historical\nto 2080-2100)', cex = 0.8, adj = 0 )
+
+rect(xleft = 20.5, xright = 21.2,
+     ytop = 1.05, ybottom = 0.8,
+     border = NA, col = 'grey95')
+
+rect(xleft = 20.5, xright = 21.2,
+     ytop = 1.05-0.08, ybottom = 0.8+0.08,
+     border = NA, col = 'grey90')
+
+text(x = 21.7, y = 0.93, labels  = 'Suitability\n1970-2100\n(Q5-Q95,Q25-Q75)', cex = 0.8, adj = 0 )
 
 for(b in min(bins):max(bins)){
   
@@ -36,15 +56,18 @@ for(b in min(bins):max(bins)){
        ybottom = quantiles_b[1] + delta,
        xright = binbreaks[b+1],
        ytop =  quantiles_b[5]+ delta,
-       col =  'grey90',
+       col =  'grey95',
        border = NA)
 
   rect(xleft = binbreaks[b],
        ybottom = quantiles_b[2] + delta,
        xright = binbreaks[b+1],
        ytop =  quantiles_b[4] + delta,
-       col =  'grey85',
+       col =  'grey90',
        border = NA)
+  
+  # segments(x0 = binbreaks[b], x1 = binbreaks[b+1], y0 = quantiles_b[3] + delta,
+  #          col = 'grey70', wd = 1.5)
   
   mech_fitness_b <- mech_fitness[bins == b]
   quantiles_b <- quantile(mech_fitness_b, c(0.025, 0.25, 0.5, 0.75, 0.975))
@@ -53,20 +76,23 @@ for(b in min(bins):max(bins)){
        ybottom = -quantiles_b[1] - delta,
        xright = binbreaks[b+1],
        ytop =  -quantiles_b[5]- delta,
-       col =  'grey90',
+       col =  'grey95',
        border = NA) 
   
   rect(xleft = binbreaks[b],
        ybottom = -quantiles_b[2]- delta,
        xright = binbreaks[b+1],
        ytop =  -quantiles_b[4]- delta,
-       col =  'grey85',
+       col =  'grey90',
        border = NA) 
+  
+  # segments(x0 = binbreaks[b], x1 = binbreaks[b+1], y0 = -quantiles_b[3] - delta,
+  #          col = 'grey70', wd = 1.5)
   
 }
 
-text(x = -5, y = 0.9, labels = 'Correlative\nmodel', adj = 0, col = 'grey20')
-text(x = -5, y = -0.9, labels = 'Mechanistic\nmodel', adj = 0, col = 'grey20')
+text(x = -5, y = 0.9, labels = 'Correlative\nmodel projections', adj = 0, col = 'grey20', cex = 0.9)
+text(x = -5, y = -0.9, labels = 'Mechanistic\nmodel projections', adj = 0, col = 'grey20', cex = 0.9)
 
 for(b in  min(bins):max(bins)){
   
@@ -147,7 +173,7 @@ points(x = quantile(tmean_20802100_cont, c(0.5)), y = -quantile(mech_fitness_con
 
 arrows(x0 = quantile(tmean_hist_cont, c(0.5))+0.2, x1 = quantile(tmean_20802100_cont, c(0.5))-0.2,
        y0 = -quantile(mech_fitness_cont_hist, c(0.5)) - delta - 0.02, y1 = -quantile(mech_fitness_cont_20802100, c(0.5)) - delta + 0.02,
-       length = 0.1, angle = 30, col = '#9f7132', lwd = 1.5)
+       length = 0.1, angle = 25, col = 'black', lwd = 1.5)
 
 
 
@@ -174,7 +200,7 @@ segments(x0 = quantile(tmean_20802100_cont, c(0.5)),
 
 arrows(x0 = quantile(tmean_hist_cont, c(0.5))+0.2, x1 = quantile(tmean_20802100_cont, c(0.5))-0.2,
        y0 = quantile(csdm_fitness_cont_hist, c(0.5)) + delta, y1 = quantile(csdm_fitness_cont_20802100, c(0.5)) + delta,
-       length = 0.1, angle = 30, col = '#9f7132', lwd = 1.5)
+       length = 0.1, angle = 25, col = 'black', lwd = 1.5)
 
 points(x = quantile(tmean_20802100_cont, c(0.5)), y = quantile(csdm_fitness_cont_20802100, c(0.5))+ delta,
        pch = 19, col = '#d5af7b', cex = 1)
@@ -208,6 +234,33 @@ points(x = quantile(tmean_hist_cont, c(0.5)), y = quantile(csdm_fitness_cont_his
 # Mediterranean
 
 
+segments(x0 = quantile(tmean_20802100_med, c(0.25)), x1 = quantile(tmean_20802100_med, c(0.75)),
+         y0 = -quantile(mech_fitness_med_20802100 , c(0.5)) - delta,
+         col = 'white', lwd = 4.5)
+
+segments(x0 = quantile(tmean_20802100_med, c(0.5)),
+         y0 = -quantile(mech_fitness_med_20802100 , c(0.25))- delta, y1 = -quantile(mech_fitness_med_20802100 , c(0.75)) - delta,
+         col = 'white', lwd = 4.5)
+
+points(x = quantile(tmean_20802100_med, c(0.5)), y = -quantile(mech_fitness_med_20802100 , c(0.5))- delta,
+       pch = 19, col = 'white', cex = 1.3)
+
+segments(x0 = quantile(tmean_20802100_med, c(0.25)), x1 = quantile(tmean_20802100_med, c(0.75)),
+         y0 = -quantile(mech_fitness_med_20802100 , c(0.5)) - delta,
+         col = '#ed947e', lwd = 2.5)
+
+segments(x0 = quantile(tmean_20802100_med, c(0.5)),
+         y0 = -quantile(mech_fitness_med_20802100 , c(0.25)) - delta, y1 = -quantile(mech_fitness_med_20802100 , c(0.75)) - delta,
+         col = '#ed947e', lwd = 2.5)
+
+points(x = quantile(tmean_20802100_med, c(0.5)), y = -quantile(mech_fitness_med_20802100 , c(0.5))- delta,
+       pch = 19, col = '#ed947e', cex = 1)
+
+
+arrows(x0 = quantile(tmean_hist_med, c(0.5))+0.2, x1 = quantile(tmean_20802100_med, c(0.5))- 0.2,
+       y0 = -quantile(mech_fitness_med_hist, c(0.5)) - delta , y1 = -quantile(mech_fitness_med_20802100, c(0.5)) - delta,
+       length = 0.1, angle = 25, col = 'black', lwd = 1.5)
+
 segments(x0 = quantile(tmean_hist_med, c(0.25)), x1 = quantile(tmean_hist_med, c(0.75)),
          y0 = -quantile(mech_fitness_med_hist , c(0.5)) - delta,
          col = 'white', lwd = 4.5)
@@ -232,30 +285,6 @@ points(x = quantile(tmean_hist_med, c(0.5)), y = -quantile(mech_fitness_med_hist
 
 
 
-segments(x0 = quantile(tmean_20802100_med, c(0.25)), x1 = quantile(tmean_20802100_med, c(0.75)),
-         y0 = -quantile(mech_fitness_med_20802100 , c(0.5)) - delta,
-         col = 'white', lwd = 4.5)
-
-segments(x0 = quantile(tmean_20802100_med, c(0.5)),
-         y0 = -quantile(mech_fitness_med_20802100 , c(0.25))- delta, y1 = -quantile(mech_fitness_med_20802100 , c(0.75)) - delta,
-         col = 'white', lwd = 4.5)
-
-points(x = quantile(tmean_20802100_med, c(0.5)), y = -quantile(mech_fitness_med_20802100 , c(0.5))- delta,
-       pch = 19, col = 'white', cex = 1.3)
-
-segments(x0 = quantile(tmean_20802100_med, c(0.25)), x1 = quantile(tmean_20802100_med, c(0.75)),
-         y0 = -quantile(mech_fitness_med_20802100 , c(0.5)) - delta,
-         col = '#ed947e', lwd = 2.5)
-
-segments(x0 = quantile(tmean_20802100_med, c(0.5)),
-         y0 = -quantile(mech_fitness_med_20802100 , c(0.25)) - delta, y1 = -quantile(mech_fitness_med_20802100 , c(0.75)) - delta,
-         col = '#ed947e', lwd = 2.5)
-
-points(x = quantile(tmean_20802100_med, c(0.5)), y = -quantile(mech_fitness_med_20802100 , c(0.5))- delta,
-       pch = 19, col = '#ed947e', cex = 1)
-
-
-
 segments(x0 = quantile(tmean_hist_med, c(0.25)), x1 = quantile(tmean_hist_med, c(0.75)),
          y0 = quantile(csdm_fitness_med_hist, c(0.5)) + delta,
          col = 'white', lwd = 4.5)
@@ -303,6 +332,9 @@ points(x = quantile(tmean_20802100_med, c(0.5)), y = quantile(csdm_fitness_med_2
        pch = 19, col = '#ed947e', cex = 1)
 
 
+arrows(x0 = quantile(tmean_hist_med, c(0.5))+0.2, x1 = quantile(tmean_20802100_med, c(0.5))- 0.2,
+       y0 = quantile(csdm_fitness_med_hist, c(0.5)) + delta- 0.01, y1 = quantile(csdm_fitness_med_20802100, c(0.5)) + delta + 0.03,
+       length = 0.1, angle = 25, col = 'black', lwd = 1.5)
 
 
 # Boreal
@@ -357,7 +389,7 @@ points(x = quantile(tmean_20802100_bor, c(0.5)), y = -quantile(mech_fitness_bor_
 
 arrows(x0 = quantile(tmean_hist_bor, c(0.5))+0.2, x1 = quantile(tmean_20802100_bor, c(0.5))-0.2,
        y0 = -quantile(mech_fitness_bor_hist, c(0.5)) - delta - 0.02, y1 = -quantile(mech_fitness_bor_20802100, c(0.5)) - delta + 0.02,
-       length = 0.1, angle = 30, col = '#37776f', lwd = 1.5)
+       length = 0.1, angle = 25, col = 'black', lwd = 1.5)
 
 
 
@@ -409,5 +441,5 @@ points(x = quantile(tmean_20802100_bor, c(0.5)), y = quantile(csdm_fitness_bor_2
 
 arrows(x0 = quantile(tmean_hist_bor, c(0.5))+0.4, x1 = quantile(tmean_20802100_bor, c(0.5))-0.3,
        y0 = quantile(csdm_fitness_bor_hist, c(0.5)) + delta + 0.03, y1 = quantile(csdm_fitness_bor_20802100, c(0.5)) + delta - 0.03,
-       length = 0.1, angle = 25, col = '#37776f', lwd = 1.5)
+       length = 0.1, angle = 25, col = 'black', lwd = 1.5)
 
